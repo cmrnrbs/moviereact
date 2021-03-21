@@ -6,16 +6,11 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
-import { getYoutubeMeta } from "react-native-youtube-iframe";
 function TrailerItem(props) {
   const deviceWidth = Dimensions.get("window").width;
   const posterWidth = (deviceWidth - 50) / 2;
   const leftPosition = (posterWidth - 24) / 2;
   const marginValue = props.itemIndex % 2 == 0 ? 10 : 0;
-
-  getYoutubeMeta("sNhhvQGsMEc").then((meta) => {
-    console.log("title of the video : " + meta.title);
-  });
 
   return (
     <TouchableWithoutFeedback onPress={props.onPressFunction}>

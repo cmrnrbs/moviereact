@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import {
   View,
-  StyleSheet,
   Text,
   Image,
   TouchableWithoutFeedback,
+  StyleSheet,
+  Modal,
 } from "react-native";
+import YoutubePlayer from "react-native-youtube-iframe";
 import Constants from "expo-constants";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ScrollView } from "react-native-gesture-handler";
@@ -21,6 +23,8 @@ class MovieDetail extends Component {
 
   state = {
     teaserTrailers: [],
+    activeMovieTrailerKey: "",
+    modalVisible: false,
   };
 
   componentDidMount() {
@@ -50,6 +54,57 @@ class MovieDetail extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Modal
+          style={{ position: "absolute", top: 0 }}
+          animationType="slide"
+          transparent={true}
+          statusBarTranslucent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.setState({ modalVisible: false });
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#000",
+            }}
+          >
+            <TouchableWithoutFeedback
+              onPress={() => this.setState({ modalVisible: false })}
+            >
+              <View
+                style={{
+                  backgroundColor: "#222",
+                  width: 48,
+                  height: 48,
+                  position: "absolute",
+                  top: Constants.statusBarHeight + 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  left: 20,
+                  borderRadius: 10,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="close"
+                  size={20}
+                  color={"white"}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+
+            <View style={{ width: "100%" }}>
+              <YoutubePlayer
+                play={true}
+                height={270}
+                videoId={this.state.activeMovieTrailerKey}
+              />
+            </View>
+          </View>
+        </Modal>
         <ScrollView>
           <TouchableWithoutFeedback onPress={() => this.props.navigation.pop()}>
             <MaterialCommunityIcons
@@ -109,12 +164,20 @@ class MovieDetail extends Component {
             <Text>{this.movieItem.overview}</Text>
             <Text style={styles.header}>Teasers & Trailers</Text>
             <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-              {this.state.teaserTrailers.map((item) => {
+              {this.state.teaserTrailers.map((item, index) => {
                 return (
                   <TrailerItem
-                    key={item.key}
                     poster={this.movieItem.backdrop_path}
+                    key={item.key}
+                    onPressFunction={() => {
+                      this.setState({
+                        modalVisible: true,
+                        activeMovieTrailerKey: item.key,
+                      });
+                    }}
                     data={item}
+                    modalVisible={this.state.modalVisible}
+                    itemIndex={index}
                   />
                 );
               })}
