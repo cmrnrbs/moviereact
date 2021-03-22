@@ -6,9 +6,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainRoot from "./app/pages/MainRoot";
 import MovieDetail from "./app/pages/MovieDetail";
-
+import { useFonts } from "expo-font";
 const Stack = createStackNavigator();
 export default function App() {
+  let [fontsLoaded] = useFonts({
+    Poppins: require("./app/assets/fonts/Poppins-Regular.ttf"),
+    PoppinsLight: require("./app/assets/fonts/Poppins-Light.ttf"),
+    PoppinsSBold: require("./app/assets/fonts/Poppins-SemiBold.ttf"),
+    PoppinsBold: require("./app/assets/fonts/Poppins-Bold.ttf"),
+  });
+  if (!fontsLoaded) {
+    <View></View>;
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator

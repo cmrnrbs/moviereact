@@ -142,26 +142,21 @@ class MovieDetail extends Component {
             >
               <View style={{ flexWrap: "wrap", flexDirection: "column" }}>
                 <Text style={styles.title}>{this.movieItem.title}</Text>
-                <Text>{this.movieItem.release_date}</Text>
+                <Text style={styles.subtitle}>
+                  {this.movieItem.release_date}
+                </Text>
               </View>
-              <View
-                style={{
-                  width: 48,
-                  height: 48,
-                  backgroundColor: "white",
-                  borderRadius: 24,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text>{this.movieItem.vote_average}</Text>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.rating}>{this.movieItem.vote_average}</Text>
               </View>
             </View>
 
             <ChipGroup datas={this.movieItem.genres} />
 
             <Text style={styles.header}>Overview</Text>
-            <Text>{this.movieItem.overview}</Text>
+            <Text style={{ fontFamily: "PoppinsLight" }}>
+              {this.movieItem.overview}
+            </Text>
             <Text style={styles.header}>Teasers & Trailers</Text>
             <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
               {this.state.teaserTrailers.map((item, index) => {
@@ -192,17 +187,33 @@ class MovieDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
+  },
+  rating: {
+    fontFamily: "PoppinsSBold",
+  },
+  ratingBadge: {
+    width: 48,
+    height: 48,
+    backgroundColor: "#999",
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  subtitle: {
+    fontSize: 14,
+    fontFamily: "PoppinsLight",
   },
   poster: {
     height: 281,
   },
   title: {
     fontSize: 17,
-    fontWeight: "700",
+    fontFamily: "Poppins",
   },
   header: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontFamily: "PoppinsSBold",
     marginTop: 10,
   },
 });

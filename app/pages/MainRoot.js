@@ -47,6 +47,7 @@ class MainRoot extends Component {
         tabBarOptions={{
           activeTintColor: "#333",
           inactiveTintColor: "#999",
+          labelStyle: { fontFamily: "Poppins" },
         }}
         initialRouteName="Home"
       >
