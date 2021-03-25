@@ -1,22 +1,38 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainRoot from "./app/pages/MainRoot";
 import MovieDetail from "./app/pages/MovieDetail";
-import { useFonts } from "expo-font";
+import * as Font from "expo-font";
 const Stack = createStackNavigator();
 export default function App() {
-  let [fontsLoaded] = useFonts({
-    Poppins: require("./app/assets/fonts/Poppins-Regular.ttf"),
-    PoppinsLight: require("./app/assets/fonts/Poppins-Light.ttf"),
-    PoppinsSBold: require("./app/assets/fonts/Poppins-SemiBold.ttf"),
-    PoppinsBold: require("./app/assets/fonts/Poppins-Bold.ttf"),
-  });
+  const [fontsLoaded, setFontLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    async function loadResourcesAndDataAsync() {
+      try {
+        // Load fonts
+        await Font.loadAsync({
+          "poppins-r": require("./app/assets/fonts/Poppins-Regular.ttf"),
+          "poppins-l": require("./app/assets/fonts/Poppins-Light.ttf"),
+          "poppins-sb": require("./app/assets/fonts/Poppins-SemiBold.ttf"),
+          "poppins-b": require("./app/assets/fonts/Poppins-Bold.ttf"),
+        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setFontLoaded(true);
+      }
+    }
+
+    loadResourcesAndDataAsync();
+  }, []);
+
   if (!fontsLoaded) {
-    <View></View>;
+    return null;
   }
   return (
     <NavigationContainer>
@@ -39,12 +55,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

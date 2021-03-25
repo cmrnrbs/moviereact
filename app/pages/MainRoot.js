@@ -12,14 +12,30 @@ import Home from "./../pages/Home";
 import Favorite from "./../pages/Favorite";
 import Settings from "./../pages/Settings";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-const Tab = createBottomTabNavigator();
-class MainRoot extends Component {
-  state = {
-    isLoading: true,
-    genres: [],
-  };
+import * as SQLite from "expo-sqlite";
 
-  componentDidMount() {
+const Tab = createBottomTabNavigator();
+const db = SQLite.openDatabase("movie.db");
+
+class MainRoot extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      isLoading: true,
+      genres: [],
+    };
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS Favorites (id INTEGER PRIMARY KEY AUTOINCREMENT, movie_id INT, title TEXT, genres TEXT, overview TEXT, popularity TEXT, release_date TEXT, vote_average TEXT, vote_count TEXT, poster TEXT, backdrop TEXT);"
+      );
+    });
+
+    this.fetchData();
+  }
+
+  fetchData() {
     return fetch(
       "https://api.themoviedb.org/3/genre/movie/list?api_key=802b2c4b88ea1183e50e6b285a27696e"
     )
@@ -47,7 +63,7 @@ class MainRoot extends Component {
         tabBarOptions={{
           activeTintColor: "#333",
           inactiveTintColor: "#999",
-          labelStyle: { fontFamily: "Poppins" },
+          labelStyle: { fontFamily: "poppins-r" },
         }}
         initialRouteName="Home"
       >

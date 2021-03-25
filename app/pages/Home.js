@@ -129,7 +129,7 @@ export default class Home extends Component {
               marginVertical: 15,
             }}
           >
-            <Text style={{ fontFamily: "Poppins" }}>Popular Movies</Text>
+            <Text style={{ fontFamily: "poppins-r" }}>Popular Movies</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -137,7 +137,7 @@ export default class Home extends Component {
                 alignItems: "center",
               }}
             >
-              <Text yle={{ fontFamily: "PoppinsSBold" }}>View All</Text>
+              <Text yle={{ fontFamily: "poppins-sb" }}>View All</Text>
               <MaterialCommunityIcons name="chevron-right" size={20} />
             </View>
           </View>
@@ -161,7 +161,7 @@ export default class Home extends Component {
               marginVertical: 15,
             }}
           >
-            <Text style={{ fontFamily: "Poppins" }}>Recent Movies</Text>
+            <Text style={{ fontFamily: "poppins-r" }}>Recent Movies</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -169,7 +169,7 @@ export default class Home extends Component {
                 alignItems: "center",
               }}
             >
-              <Text yle={{ fontFamily: "PoppinsSBold" }}>View All</Text>
+              <Text yle={{ fontFamily: "poppins-sb" }}>View All</Text>
               <MaterialCommunityIcons name="chevron-right" size={20} />
             </View>
           </View>
@@ -204,6 +204,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontFamily: "PoppinsSBold",
+    fontFamily: "poppins-sb",
   },
 });

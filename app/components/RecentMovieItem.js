@@ -26,10 +26,10 @@ function RecentMovieItem(props) {
           }}
         />
         <View style={{ marginLeft: 10, width: _width }}>
-          <Text style={{ width: 171, fontFamily: "Poppins", fontSize: 13 }}>
+          <Text style={{ width: 171, fontFamily: "poppins-r", fontSize: 13 }}>
             {props.item.title}
           </Text>
-          <Text style={{ fontFamily: "PoppinsLight", fontSize: 12 }}>
+          <Text style={{ fontFamily: "poppins-l", fontSize: 12 }}>
             {props.item.genres.map(
               (genre, index) =>
                 genre + (index < props.item.genres.length - 1 ? ", " : "")
@@ -37,13 +37,18 @@ function RecentMovieItem(props) {
           </Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
             <MaterialCommunityIcons name="star" color={"#FE6D8E"} size={20} />
-            <Text style={{ fontFamily: "PoppinsSBold", alignSelf: "center" }}>
+            <Text
+              style={{
+                fontFamily: "poppins-sb",
+                alignSelf: "center",
+              }}
+            >
               {props.item.vote_average}
             </Text>
             <Text
               style={{
                 fontSize: 10,
-                fontFamily: "PoppinsLight",
+                fontFamily: "poppins-l",
                 alignSelf: "flex-end",
               }}
             >

@@ -9,7 +9,7 @@ function ChipGroup(props) {
             <Text
               style={{
                 color: "#222",
-                fontFamily: "Poppins",
+                fontFamily: "poppins-r",
                 fontSize: 11,
               }}
             >

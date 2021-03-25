@@ -23,7 +23,7 @@ function MovieItem(props) {
             uri: "http://image.tmdb.org/t/p/w342/" + props.item.poster_path,
           }}
         />
-        <Text style={{ width: 171, fontFamily: "Poppins", fontSize: 13 }}>
+        <Text style={{ width: 171, fontFamily: "poppins-r", fontSize: 13 }}>
           {props.item.title}
         </Text>
       </View>

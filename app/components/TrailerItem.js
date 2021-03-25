@@ -41,7 +41,7 @@ function TrailerItem(props) {
             flexWrap: "wrap",
             width: posterWidth,
             fontSize: 12,
-            fontFamily: "Poppins",
+            fontFamily: "poppins-r",
           }}
         >
           {props.data.name}
