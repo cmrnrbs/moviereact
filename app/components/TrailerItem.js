@@ -34,7 +34,7 @@ function TrailerItem(props) {
             borderRadius: 20,
             marginBottom: 5,
           }}
-          source={{ uri: "http://image.tmdb.org/t/p/w342/" + props.poster }}
+          source={{ uri: props.poster }}
         />
         <Text
           style={{

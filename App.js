@@ -14,7 +14,7 @@ export default function App() {
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
-        // Load fonts
+        //TODO: Load fonts
         await Font.loadAsync({
           "poppins-r": require("./app/assets/fonts/Poppins-Regular.ttf"),
           "poppins-l": require("./app/assets/fonts/Poppins-Light.ttf"),

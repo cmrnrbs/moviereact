@@ -22,7 +22,7 @@ function RecentMovieItem(props) {
         <Image
           style={styles.poster}
           source={{
-            uri: "http://image.tmdb.org/t/p/w342/" + props.item.poster_path,
+            uri: props.item.poster_path,
           }}
         />
         <View style={{ marginLeft: 10, width: _width }}>

@@ -14,13 +14,15 @@ function MovieItem(props) {
   const navigation = useNavigation();
   return (
     <TouchableWithoutFeedback
-      onPress={() => navigation.navigate("MovieDetail", { item: props.item })}
+      onPress={() => {
+        navigation.navigate("MovieDetail", { item: props.item });
+      }}
     >
       <View style={styles.item}>
         <Image
           style={styles.poster}
           source={{
-            uri: "http://image.tmdb.org/t/p/w342/" + props.item.poster_path,
+            uri: props.item.poster_path,
           }}
         />
         <Text style={{ width: 171, fontFamily: "poppins-r", fontSize: 13 }}>

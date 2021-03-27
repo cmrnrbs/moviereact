@@ -41,29 +41,24 @@ class MovieDetail extends Component {
           if (_array.length != 0) {
             this.setState({ isFavorite: true });
           } else {
-            console.log("data yok");
+            // console.log("data yok");
           }
         },
         (txObj, error) => console.error(error)
-      ); // end executeSQL
-    }); // end transaction
+      );
+    });
   }
 
-  downloadFile = async (data, size) => {
+  downloadFile = async (data, process) => {
     const movieDir = FileSystem.documentDirectory + "/" + data.id + "/";
     const dirInfo = await FileSystem.getInfoAsync(movieDir);
     if (!dirInfo.exists) {
       await FileSystem.makeDirectoryAsync(movieDir, { intermediates: true });
     }
     const fileUri =
-      movieDir + (size == 342 ? "poster_path.jpg" : "backdrop_path.jpg");
+      movieDir + (process == 1 ? "poster_path.jpg" : "backdrop_path.jpg");
 
-    const uri =
-      "http://image.tmdb.org/t/p/w" +
-      size +
-      "/" +
-      (size == 342 ? data.poster_path : data.backdrop_path);
-    // console.log(uri);
+    const uri = process == 1 ? data.poster_path : data.backdrop_path;
     let downloadObject = FileSystem.createDownloadResumable(uri, fileUri);
     let response = await downloadObject.downloadAsync();
     return response;
@@ -87,10 +82,10 @@ class MovieDetail extends Component {
   };
 
   addItem = async (data) => {
-    await this.downloadFile(data, 342).then((response) => {
+    await this.downloadFile(data, 1).then((response) => {
       //TODO: poster_path download
       if (response.status == 200) {
-        this.downloadFile(data, 500).then((response) => {
+        this.downloadFile(data, 2).then((response) => {
           //TODO: backdrop_path download
           if (response.status == 200) {
             data.genresString = "";
@@ -209,7 +204,14 @@ class MovieDetail extends Component {
           </View>
         </Modal>
         <ScrollView>
-          <TouchableWithoutFeedback onPress={() => this.props.navigation.pop()}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              this.props.navigation.setParams({
+                query: "someText",
+              });
+              this.props.navigation.pop();
+            }}
+          >
             <MaterialCommunityIcons
               style={{
                 position: "absolute",
@@ -245,9 +247,7 @@ class MovieDetail extends Component {
             style={styles.poster}
             resizeMode={"cover"}
             source={{
-              uri:
-                "http://image.tmdb.org/t/p/w500/" +
-                this.movieItem.backdrop_path,
+              uri: this.movieItem.backdrop_path,
             }}
           />
           <View style={{ flex: 1, padding: 20 }}>
