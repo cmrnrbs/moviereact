@@ -71,7 +71,12 @@ export default class Settings extends Component {
                     Dark Mode
                   </Text>
                 </View>
-                <Switch value={isDarkMode} onValueChange={updateTheme} />
+                <Switch
+                  value={isDarkMode}
+                  onValueChange={updateTheme}
+                  trackColor={{ false: "#f4f3f4", true: "#f4f3f4" }}
+                  thumbColor={isDarkMode ? "#26ed7c" : "#f4f3f4"}
+                />
               </View>
               <TouchableWithoutFeedback
                 style={styles.listitem}
@@ -140,7 +145,7 @@ export default class Settings extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight + 10,
   },
   listitem: {
     marginVertical: 10,

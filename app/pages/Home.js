@@ -270,7 +270,7 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight + 10,
   },
   header: {
     width: "100%",

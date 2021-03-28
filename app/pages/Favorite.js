@@ -8,6 +8,7 @@ import AppLoading from "expo-app-loading";
 import RecentMovieItem from "../components/RecentMovieItem";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StatusBar } from "expo-status-bar";
+import { ThemeContext } from "../contexts/ThemeContext";
 const db = SQLite.openDatabase("movie.db");
 export default function Favorite({ navigation, route }) {
   const [data, setData] = useState(null);
@@ -44,44 +45,87 @@ export default function Favorite({ navigation, route }) {
   } else if (!isLoading) {
     if (data.length == 0) {
       return (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "white",
+        <ThemeContext.Consumer>
+          {(context) => {
+            const { isDarkMode, light, dark } = context;
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: isDarkMode ? dark.bg : light.bg,
+                }}
+              >
+                <StatusBar style={isDarkMode ? "light" : "dark"} />
+                <View style={{ alignItems: "center" }}>
+                  <MaterialCommunityIcons
+                    name="cloud-off-outline"
+                    color={isDarkMode ? light.bg : dark.bg}
+                    size={36}
+                  />
+                  <View style={{ marginBottom: 5 }} />
+                  <Text
+                    style={[
+                      styles.nodata,
+                      { color: isDarkMode ? light.bg : dark.bg },
+                    ]}
+                  >
+                    No Data Found
+                  </Text>
+                </View>
+              </View>
+            );
           }}
-        >
-          <StatusBar style={"auto"} />
-          <View style={{ alignItems: "center" }}>
-            <MaterialCommunityIcons name="delete-outline" size={30} />
-            <View style={{ marginBottom: 5 }} />
-            <Text style={styles.nodata}>No Data Found</Text>
-          </View>
-        </View>
+        </ThemeContext.Consumer>
       );
     } else {
       return (
-        <View style={styles.container}>
-          <StatusBar style={"auto"} />
-          <Text style={styles.title}>Favorite</Text>
-          <ScrollView style={{ paddingHorizontal: 20 }}>
-            {data.map((item) => {
-              const movieDir =
-                FileSystem.documentDirectory + "/" + item.movie_id + "/";
-              const posterPath = movieDir + "poster_path.jpg";
-              const backdropPath = movieDir + "backdrop_path.jpg";
-              item.genres =
-                typeof item.genres == "string"
-                  ? item.genres.split(",")
-                  : item.genres;
-              item.poster_path = posterPath;
-              item.backdrop_path = backdropPath;
-              item.id = item.movie_id;
-              return <RecentMovieItem key={item.id} item={item} />;
-            })}
-          </ScrollView>
-        </View>
+        <ThemeContext.Consumer>
+          {(context) => {
+            const { isDarkMode, light, dark } = context;
+            return (
+              <View
+                style={[
+                  styles.container,
+                  { backgroundColor: isDarkMode ? dark.bg : light.bg },
+                ]}
+              >
+                <StatusBar style={isDarkMode ? "light" : "dark"} />
+                <Text
+                  style={[
+                    styles.title,
+                    { color: isDarkMode ? light.bg : dark.bg },
+                  ]}
+                >
+                  Favorite
+                </Text>
+                <ScrollView style={{ paddingHorizontal: 20 }}>
+                  {data.map((item) => {
+                    const movieDir =
+                      FileSystem.documentDirectory + "/" + item.movie_id + "/";
+                    const posterPath = movieDir + "poster_path.jpg";
+                    const backdropPath = movieDir + "backdrop_path.jpg";
+                    item.genres =
+                      typeof item.genres == "string"
+                        ? item.genres.split(",")
+                        : item.genres;
+                    item.poster_path = posterPath;
+                    item.backdrop_path = backdropPath;
+                    item.id = item.movie_id;
+                    return (
+                      <RecentMovieItem
+                        key={item.id}
+                        item={item}
+                        context={context}
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            );
+          }}
+        </ThemeContext.Consumer>
       );
     }
   }
@@ -92,7 +136,7 @@ export default function Favorite({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight + 10,
     backgroundColor: "white",
   },
   header: {

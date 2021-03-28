@@ -22,7 +22,7 @@ class ThemeContextProvider extends Component {
     this.state = {
       isDarkMode: false,
       light: { bg: "#FFF" },
-      dark: { bg: "#171D20" },
+      dark: { bg: "#222124" },
     };
     this.getisDarkMode();
   }
