@@ -7,6 +7,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import AppLoading from "expo-app-loading";
 import RecentMovieItem from "../components/RecentMovieItem";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { StatusBar } from "expo-status-bar";
 const db = SQLite.openDatabase("movie.db");
 export default function Favorite({ navigation, route }) {
   const [data, setData] = useState(null);
@@ -36,28 +37,33 @@ export default function Favorite({ navigation, route }) {
 
   if (data == null && isLoading) {
     return (
-      <SafeAreaView
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <AppLoading />
-      </SafeAreaView>
+      </View>
     );
   } else if (!isLoading) {
     if (data.length == 0) {
       return (
-        <SafeAreaView
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "white",
+          }}
         >
+          <StatusBar style={"auto"} />
           <View style={{ alignItems: "center" }}>
             <MaterialCommunityIcons name="delete-outline" size={30} />
             <View style={{ marginBottom: 5 }} />
             <Text style={styles.nodata}>No Data Found</Text>
           </View>
-        </SafeAreaView>
+        </View>
       );
     } else {
       return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          <StatusBar style={"auto"} />
           <Text style={styles.title}>Favorite</Text>
           <ScrollView style={{ paddingHorizontal: 20 }}>
             {data.map((item) => {
@@ -75,7 +81,7 @@ export default function Favorite({ navigation, route }) {
               return <RecentMovieItem key={item.id} item={item} />;
             })}
           </ScrollView>
-        </SafeAreaView>
+        </View>
       );
     }
   }
@@ -86,8 +92,7 @@ export default function Favorite({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
-    paddingTop: 20,
+    paddingTop: Constants.statusBarHeight,
     backgroundColor: "white",
   },
   header: {

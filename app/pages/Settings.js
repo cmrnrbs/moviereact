@@ -11,6 +11,7 @@ import Constants from "expo-constants";
 import { ThemeContext } from "../contexts/ThemeContext";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
 export default class Settings extends Component {
   showLicenses = () =>
     Alert.alert(
@@ -37,12 +38,13 @@ export default class Settings extends Component {
         {(context) => {
           const { isDarkMode, light, dark, updateTheme } = context;
           return (
-            <SafeAreaView
+            <View
               style={[
                 styles.container,
                 { backgroundColor: isDarkMode ? dark.bg : light.bg },
               ]}
             >
+              <StatusBar style={isDarkMode ? "light" : "dark"} />
               <Text
                 style={[
                   styles.title,
@@ -56,8 +58,18 @@ export default class Settings extends Component {
                   <MaterialCommunityIcons
                     name={isDarkMode ? "weather-night" : "weather-sunny"}
                     size={26}
+                    color={isDarkMode ? light.bg : dark.bg}
                   />
-                  <Text style={{ marginLeft: 10 }}>Dark Mode</Text>
+                  <Text
+                    style={{
+                      marginLeft: 10,
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    Dark Mode
+                  </Text>
                 </View>
                 <Switch value={isDarkMode} onValueChange={updateTheme} />
               </View>
@@ -66,25 +78,58 @@ export default class Settings extends Component {
                 onPress={this.showLicenses}
               >
                 <View style={[styles.settingsItem2, { paddingHorizontal: 20 }]}>
-                  <MaterialCommunityIcons name="book-open-outline" size={26} />
-                  <Text style={{ marginLeft: 10 }}>Privacy Policy</Text>
+                  <MaterialCommunityIcons
+                    name="book-open-outline"
+                    size={26}
+                    color={isDarkMode ? light.bg : dark.bg}
+                  />
+                  <Text
+                    style={{
+                      marginLeft: 10,
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    Privacy Policy
+                  </Text>
                 </View>
               </TouchableWithoutFeedback>
               <View style={[styles.settingsItem2, { paddingHorizontal: 20 }]}>
-                <MaterialCommunityIcons name="information-outline" size={26} />
+                <MaterialCommunityIcons
+                  name="information-outline"
+                  size={26}
+                  color={isDarkMode ? light.bg : dark.bg}
+                />
                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
                     flex: 1,
-                    paddingRight: 20,
                   }}
                 >
-                  <Text style={{ marginLeft: 10 }}>Version</Text>
-                  <Text>v{Constants.manifest.version}</Text>
+                  <Text
+                    style={{
+                      marginLeft: 10,
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    Version
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    v{Constants.manifest.version}
+                  </Text>
                 </View>
               </View>
-            </SafeAreaView>
+            </View>
           );
         }}
       </ThemeContext.Consumer>
@@ -95,8 +140,7 @@ export default class Settings extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
-    marginTop: Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight,
   },
   listitem: {
     marginVertical: 10,
@@ -126,6 +170,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     fontSize: 22,
     fontFamily: "poppins-sb",
-    marginBottom: 10,
+    marginBottom: 20,
   },
 });

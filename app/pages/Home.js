@@ -6,6 +6,8 @@ import RecentMovieItem from "../components/RecentMovieItem";
 RecentMovieItem;
 import Constants from "expo-constants";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { ThemeContext } from "../contexts/ThemeContext";
+import { StatusBar } from "expo-status-bar";
 export default class Home extends Component {
   _isMount = false;
   baseUrl = "http://api.themoviedb.org/3/movie/";
@@ -116,78 +118,151 @@ export default class Home extends Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Movie Catch</Text>
-          <MaterialCommunityIcons name="magnify" size={24} />
-        </View>
-
-        <ScrollView>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingHorizontal: 20,
-              marginVertical: 15,
-            }}
-          >
-            <Text style={{ fontFamily: "poppins-r" }}>Popular Movies</Text>
+      <ThemeContext.Consumer>
+        {(context) => {
+          const { isDarkMode, light, dark } = context;
+          return (
             <View
-              style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
+              style={[
+                styles.container,
+                { backgroundColor: isDarkMode ? dark.bg : light.bg },
+              ]}
             >
-              <Text yle={{ fontFamily: "poppins-sb" }}>View All</Text>
-              <MaterialCommunityIcons name="chevron-right" size={20} />
-            </View>
-          </View>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <View style={{ flexDirection: "row", flex: 1, paddingLeft: 20 }}>
-              {this.state.popularMovies.map((item, index) => {
-                return index < 4 ? (
-                  <MovieItem key={item.id} item={item} />
-                ) : (
-                  <View key={item.id} />
-                );
-              })}
-            </View>
-          </ScrollView>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingHorizontal: 20,
-              marginVertical: 15,
-            }}
-          >
-            <Text style={{ fontFamily: "poppins-r" }}>Recent Movies</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
-            >
-              <Text yle={{ fontFamily: "poppins-sb" }}>View All</Text>
-              <MaterialCommunityIcons name="chevron-right" size={20} />
-            </View>
-          </View>
+              <StatusBar style={isDarkMode ? "light" : "dark"} />
+              <View style={styles.header}>
+                <Text
+                  style={[
+                    styles.title,
+                    { color: isDarkMode ? light.bg : dark.bg },
+                  ]}
+                >
+                  Movie Catch
+                </Text>
+                <MaterialCommunityIcons
+                  name="magnify"
+                  color={isDarkMode ? light.bg : dark.bg}
+                  size={24}
+                />
+              </View>
 
-          <View style={{ paddingHorizontal: 20 }}>
-            {this.state.recentMovies.map((item, index) => {
-              return index < 4 ? (
-                <RecentMovieItem key={item.id} item={item} />
-              ) : (
-                <View key={item.id} />
-              );
-            })}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+              <ScrollView>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 20,
+                    marginVertical: 15,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: "poppins-r",
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    Popular Movies
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "poppins-sb",
+                        color: isDarkMode ? light.bg : dark.bg,
+                      }}
+                    >
+                      View All
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={20}
+                      color={isDarkMode ? light.bg : dark.bg}
+                    />
+                  </View>
+                </View>
+                <ScrollView
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <View
+                    style={{ flexDirection: "row", flex: 1, paddingLeft: 20 }}
+                  >
+                    {this.state.popularMovies.map((item, index) => {
+                      return index < 4 ? (
+                        <MovieItem
+                          key={item.id}
+                          item={item}
+                          context={context}
+                        />
+                      ) : (
+                        <View key={item.id} />
+                      );
+                    })}
+                  </View>
+                </ScrollView>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 20,
+                    marginVertical: 15,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: "poppins-r",
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    Recent Movies
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "poppins-sb",
+                        color: isDarkMode ? light.bg : dark.bg,
+                      }}
+                    >
+                      View All
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      color={isDarkMode ? light.bg : dark.bg}
+                      size={20}
+                    />
+                  </View>
+                </View>
+
+                <View style={{ paddingHorizontal: 20 }}>
+                  {this.state.recentMovies.map((item, index) => {
+                    return index < 4 ? (
+                      <RecentMovieItem
+                        key={item.id}
+                        item={item}
+                        context={context}
+                      />
+                    ) : (
+                      <View key={item.id} />
+                    );
+                  })}
+                </View>
+              </ScrollView>
+            </View>
+          );
+        }}
+      </ThemeContext.Consumer>
     );
   }
 }
@@ -195,9 +270,7 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
-    paddingTop: 20,
-    backgroundColor: "white",
+    paddingTop: Constants.statusBarHeight,
   },
   header: {
     width: "100%",

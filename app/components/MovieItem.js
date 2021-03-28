@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
-  TextPropTypes,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +24,16 @@ function MovieItem(props) {
             uri: props.item.poster_path,
           }}
         />
-        <Text style={{ width: 171, fontFamily: "poppins-r", fontSize: 13 }}>
+        <Text
+          style={{
+            width: 171,
+            fontFamily: "poppins-r",
+            fontSize: 13,
+            color: props.context.isDarkMode
+              ? props.context.light.bg
+              : props.context.dark.bg,
+          }}
+        >
           {props.item.title}
         </Text>
       </View>

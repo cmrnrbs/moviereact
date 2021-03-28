@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, ActivityIndicator, SafeAreaView } from "react-native";
 import Constants from "expo-constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "./../pages/Home";
@@ -13,6 +7,7 @@ import Favorite from "./../pages/Favorite";
 import Settings from "./../pages/Settings";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as SQLite from "expo-sqlite";
+import { ThemeContext } from "../contexts/ThemeContext";
 const Tab = createBottomTabNavigator();
 const db = SQLite.openDatabase("movie.db");
 
@@ -58,45 +53,75 @@ class MainRoot extends Component {
       </SafeAreaView>;
     }
     return (
-      <Tab.Navigator
-        tabBarOptions={{
-          activeTintColor: "#333",
-          inactiveTintColor: "#999",
-          labelStyle: { fontFamily: "poppins-r" },
+      <ThemeContext.Consumer>
+        {(context) => {
+          const { isDarkMode, light, dark } = context;
+          return (
+            <Tab.Navigator
+              tabBarOptions={{
+                activeTintColor: isDarkMode ? "#FFF" : "#333",
+                inactiveTintColor: "#999",
+                labelStyle: { fontFamily: "poppins-r" },
+                style: {
+                  backgroundColor: isDarkMode ? dark.bg : light.bg,
+                  borderTopWidth: 0,
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 4,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 8,
+                },
+              }}
+              initialRouteName="Home"
+            >
+              <Tab.Screen
+                options={{
+                  tabBarLabel: "Home",
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons
+                      name="home"
+                      color={color}
+                      size={22}
+                    />
+                  ),
+                }}
+                name="Home"
+                component={HomeComponent}
+              />
+              <Tab.Screen
+                options={{
+                  tabBarLabel: "Favorite",
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons
+                      name="heart"
+                      color={color}
+                      size={22}
+                    />
+                  ),
+                }}
+                name="Favorite"
+                component={Favorite}
+              />
+              <Tab.Screen
+                options={{
+                  tabBarLabel: "Settings",
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons
+                      name="cog"
+                      color={color}
+                      size={22}
+                    />
+                  ),
+                }}
+                name="Settings"
+                component={Settings}
+              />
+            </Tab.Navigator>
+          );
         }}
-        initialRouteName="Home"
-      >
-        <Tab.Screen
-          options={{
-            tabBarLabel: "Home",
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="home" color={color} size={22} />
-            ),
-          }}
-          name="Home"
-          component={HomeComponent}
-        />
-        <Tab.Screen
-          options={{
-            tabBarLabel: "Favorite",
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="heart" color={color} size={22} />
-            ),
-          }}
-          name="Favorite"
-          component={Favorite}
-        />
-        <Tab.Screen
-          options={{
-            tabBarLabel: "Settings",
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="cog" color={color} size={22} />
-            ),
-          }}
-          name="Settings"
-          component={Settings}
-        />
-      </Tab.Navigator>
+      </ThemeContext.Consumer>
     );
   }
 }

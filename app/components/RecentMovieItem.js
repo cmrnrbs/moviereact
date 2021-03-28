@@ -26,10 +26,27 @@ function RecentMovieItem(props) {
           }}
         />
         <View style={{ marginLeft: 10, width: _width }}>
-          <Text style={{ width: 171, fontFamily: "poppins-r", fontSize: 13 }}>
+          <Text
+            style={{
+              width: 171,
+              fontFamily: "poppins-r",
+              fontSize: 13,
+              color: props.context.isDarkMode
+                ? props.context.light.bg
+                : props.context.dark.bg,
+            }}
+          >
             {props.item.title}
           </Text>
-          <Text style={{ fontFamily: "poppins-l", fontSize: 12 }}>
+          <Text
+            style={{
+              fontFamily: "poppins-l",
+              fontSize: 12,
+              color: props.context.isDarkMode
+                ? props.context.light.bg
+                : props.context.dark.bg,
+            }}
+          >
             {props.item.genres.map(
               (genre, index) =>
                 genre + (index < props.item.genres.length - 1 ? ", " : "")
@@ -41,6 +58,9 @@ function RecentMovieItem(props) {
               style={{
                 fontFamily: "poppins-sb",
                 alignSelf: "center",
+                color: props.context.isDarkMode
+                  ? props.context.light.bg
+                  : props.context.dark.bg,
               }}
             >
               {props.item.vote_average}
@@ -50,6 +70,9 @@ function RecentMovieItem(props) {
                 fontSize: 10,
                 fontFamily: "poppins-l",
                 alignSelf: "flex-end",
+                color: props.context.isDarkMode
+                  ? props.context.light.bg
+                  : props.context.dark.bg,
               }}
             >
               {" "}
