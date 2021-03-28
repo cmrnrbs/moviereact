@@ -13,7 +13,6 @@ import Favorite from "./../pages/Favorite";
 import Settings from "./../pages/Settings";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as SQLite from "expo-sqlite";
-
 const Tab = createBottomTabNavigator();
 const db = SQLite.openDatabase("movie.db");
 

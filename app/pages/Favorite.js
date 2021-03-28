@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     fontSize: 22,
     fontFamily: "poppins-sb",
+    marginBottom: 20,
   },
   nodata: {
     fontFamily: "poppins-r",
