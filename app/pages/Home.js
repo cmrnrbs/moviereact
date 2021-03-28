@@ -8,6 +8,7 @@ import Constants from "expo-constants";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 export default class Home extends Component {
   _isMount = false;
   baseUrl = "http://api.themoviedb.org/3/movie/";
@@ -163,27 +164,36 @@ export default class Home extends Component {
                   >
                     Popular Movies
                   </Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      alignItems: "center",
-                    }}
+                  <TouchableWithoutFeedback
+                    onPress={() =>
+                      this.props.navigation.navigate("ViewAll", {
+                        genres: this.genres,
+                        isPopular: true,
+                      })
+                    }
                   >
-                    <Text
+                    <View
                       style={{
-                        fontFamily: "poppins-sb",
-                        color: isDarkMode ? light.bg : dark.bg,
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        alignItems: "center",
                       }}
                     >
-                      View All
-                    </Text>
-                    <MaterialCommunityIcons
-                      name="chevron-right"
-                      size={20}
-                      color={isDarkMode ? light.bg : dark.bg}
-                    />
-                  </View>
+                      <Text
+                        style={{
+                          fontFamily: "poppins-sb",
+                          color: isDarkMode ? light.bg : dark.bg,
+                        }}
+                      >
+                        View All
+                      </Text>
+                      <MaterialCommunityIcons
+                        name="chevron-right"
+                        size={20}
+                        color={isDarkMode ? light.bg : dark.bg}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
                 </View>
                 <ScrollView
                   horizontal={true}
@@ -222,27 +232,36 @@ export default class Home extends Component {
                   >
                     Recent Movies
                   </Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      alignItems: "center",
-                    }}
+                  <TouchableWithoutFeedback
+                    onPress={() =>
+                      this.props.navigation.navigate("ViewAll", {
+                        genres: this.genres,
+                        isPopular: false,
+                      })
+                    }
                   >
-                    <Text
+                    <View
                       style={{
-                        fontFamily: "poppins-sb",
-                        color: isDarkMode ? light.bg : dark.bg,
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        alignItems: "center",
                       }}
                     >
-                      View All
-                    </Text>
-                    <MaterialCommunityIcons
-                      name="chevron-right"
-                      color={isDarkMode ? light.bg : dark.bg}
-                      size={20}
-                    />
-                  </View>
+                      <Text
+                        style={{
+                          fontFamily: "poppins-sb",
+                          color: isDarkMode ? light.bg : dark.bg,
+                        }}
+                      >
+                        View All
+                      </Text>
+                      <MaterialCommunityIcons
+                        name="chevron-right"
+                        color={isDarkMode ? light.bg : dark.bg}
+                        size={20}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
                 </View>
 
                 <View style={{ paddingHorizontal: 20 }}>

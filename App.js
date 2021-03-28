@@ -7,6 +7,7 @@ import MainRoot from "./app/pages/MainRoot";
 import MovieDetail from "./app/pages/MovieDetail";
 import * as Font from "expo-font";
 import ThemeContextProvider from "./app/contexts/ThemeContext";
+import ViewAll from "./app/pages/ViewAll";
 const Stack = createStackNavigator();
 export default function App() {
   const [fontsLoaded, setFontLoaded] = React.useState(false);
@@ -52,6 +53,11 @@ export default function App() {
             name="MovieDetail"
             component={MovieDetail}
             options={{ title: "MovieDetail" }}
+          />
+          <Stack.Screen
+            name="ViewAll"
+            component={ViewAll}
+            options={{ title: "ViewAll" }}
           />
         </Stack.Navigator>
       </NavigationContainer>

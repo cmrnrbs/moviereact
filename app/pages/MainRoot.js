@@ -44,7 +44,9 @@ class MainRoot extends Component {
   }
 
   render() {
-    const HomeComponent = (props) => <Home genres={this.state.genres} />;
+    const HomeComponent = (props) => (
+      <Home {...props} genres={this.state.genres} />
+    );
     if (this.state.isLoading) {
       <SafeAreaView
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
