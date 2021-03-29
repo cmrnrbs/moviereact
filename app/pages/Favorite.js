@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
-import { SafeAreaView, Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import * as SQLite from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
 import AppLoading from "expo-app-loading";

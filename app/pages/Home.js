@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  Animated,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+} from "react-native";
 import Movie from "../models/Movie";
 import MovieItem from "../components/MovieItem";
 import RecentMovieItem from "../components/RecentMovieItem";
@@ -10,6 +17,7 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 export default class Home extends Component {
+  deviceWidth = Dimensions.get("window").width;
   _isMount = false;
   baseUrl = "http://api.themoviedb.org/3/movie/";
   apiKey = "802b2c4b88ea1183e50e6b285a27696e";
@@ -19,6 +27,9 @@ export default class Home extends Component {
     recentMovies: [],
     popularMovies: [],
     recentMovies: [],
+    iconName: "magnify",
+    isAnimating: false,
+    fadeAnim: new Animated.Value(40),
   };
 
   constructor(props) {
@@ -117,11 +128,61 @@ export default class Home extends Component {
     this._isMount = false;
   }
 
+  handleSelect = () => {
+    this.setState({ isAnimating: true });
+
+    this.state.fadeAnim._value != this.deviceWidth - 40
+      ? Animated.timing(this.state.fadeAnim, {
+          toValue: this.deviceWidth - 40,
+          duration: 500,
+          useNativeDriver: false,
+        }).start(() => {
+          this.setState({ iconName: "close" });
+          this.setState({ isAnimating: false });
+        })
+      : Animated.timing(this.state.fadeAnim, {
+          toValue: 40,
+          duration: 500,
+          useNativeDriver: false,
+        }).start(() => {
+          this.setState({ iconName: "magnify" });
+          this.setState({ isAnimating: false });
+        });
+  };
+
+  renderRectangle = (context) => {
+    const { isDarkMode, light, dark } = context;
+    const customStyle = {
+      width: this.state.fadeAnim,
+    };
+
+    return (
+      <Animated.View style={[styles.rectangle, customStyle]}>
+        <TouchableWithoutFeedback
+          style={{
+            width: 40,
+            height: 40,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={() => this.handleSelect()}
+        >
+          <MaterialCommunityIcons
+            name={this.state.iconName}
+            color={isDarkMode ? light.bg : dark.bg}
+            size={24}
+          />
+        </TouchableWithoutFeedback>
+      </Animated.View>
+    );
+  };
+
   render() {
     return (
       <ThemeContext.Consumer>
         {(context) => {
           const { isDarkMode, light, dark } = context;
+
           return (
             <View
               style={[
@@ -131,19 +192,21 @@ export default class Home extends Component {
             >
               <StatusBar style={isDarkMode ? "light" : "dark"} />
               <View style={styles.header}>
-                <Text
-                  style={[
-                    styles.title,
-                    { color: isDarkMode ? light.bg : dark.bg },
-                  ]}
-                >
-                  Movie Catch
-                </Text>
-                <MaterialCommunityIcons
-                  name="magnify"
-                  color={isDarkMode ? light.bg : dark.bg}
-                  size={24}
-                />
+                {!this.state.isAnimating && this.state.iconName == "magnify" ? (
+                  <Text
+                    style={[
+                      styles.title,
+                      { color: isDarkMode ? light.bg : dark.bg },
+                    ]}
+                  >
+                    Movie Catch
+                  </Text>
+                ) : (
+                  <View />
+                )}
+                <View style={{ flexWrap: "wrap" }}>
+                  {this.renderRectangle(context)}
+                </View>
               </View>
 
               <ScrollView>
@@ -300,5 +363,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontFamily: "poppins-sb",
+  },
+  rectangle: {
+    backgroundColor: "#2c3e50",
+    height: 40,
   },
 });
