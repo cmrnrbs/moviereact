@@ -25,7 +25,6 @@ export default class Home extends Component {
   apiKey = "802b2c4b88ea1183e50e6b285a27696e";
   genres = [];
   state = {
-    isLaoding: false,
     recentMovies: [],
     popularMovies: [],
     recentMovies: [],
@@ -267,7 +266,6 @@ export default class Home extends Component {
                     fontFamily: "poppins-l",
                   }}
                   data={this.state.queryResult}
-                  style
                   placeholder="Enter movie name"
                   autoFocus={true}
                   placeholderTextColor={isDarkMode ? light.bg : dark.bg}
@@ -283,7 +281,6 @@ export default class Home extends Component {
                   inputContainerStyle={{
                     borderWidth: 0,
                     height: 40,
-                    zIndex: 999,
                   }}
                   listStyle={{
                     maxHeight: 300,
