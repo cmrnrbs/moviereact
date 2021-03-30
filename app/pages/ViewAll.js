@@ -59,7 +59,9 @@ class ViewAll extends Component {
                   id: movie.id,
                   title: movie.title,
                   poster_path:
-                    "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
+                    movie.poster_path == null
+                      ? "https://lightning.od-cdn.com/25.2.6-build-2536-master/public/img/no-cover_en_US.jpg"
+                      : "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
                   backdrop_path:
                     "http://image.tmdb.org/t/p/w500/" + movie.backdrop_path,
                   genre_ids: movie.genre_ids,

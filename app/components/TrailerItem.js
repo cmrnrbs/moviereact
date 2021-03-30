@@ -12,6 +12,8 @@ function TrailerItem(props) {
   const leftPosition = (posterWidth - 24) / 2;
   const marginValue = props.itemIndex % 2 == 0 ? 10 : 0;
 
+  const thumbnail =
+    "https://img.youtube.com/vi/" + props.data.key + "/hqdefault.jpg";
   return (
     <TouchableWithoutFeedback onPress={props.onPressFunction}>
       <View style={{ marginRight: marginValue, marginTop: 10 }}>
@@ -34,7 +36,9 @@ function TrailerItem(props) {
             borderRadius: 20,
             marginBottom: 5,
           }}
-          source={{ uri: props.poster }}
+          source={{
+            uri: thumbnail,
+          }}
         />
         <Text
           style={{

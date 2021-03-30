@@ -63,6 +63,7 @@ class MainRoot extends Component {
               tabBarOptions={{
                 activeTintColor: isDarkMode ? "#FFF" : "#333",
                 inactiveTintColor: "#999",
+                keyboardHidesTabBar: true,
                 labelStyle: { fontFamily: "poppins-r" },
                 style: {
                   backgroundColor: isDarkMode ? dark.bg : light.bg,

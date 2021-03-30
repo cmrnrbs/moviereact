@@ -3,6 +3,7 @@ import {
   Animated,
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   Dimensions,
@@ -16,6 +17,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import Autocomplete from "react-native-autocomplete-input";
 export default class Home extends Component {
   deviceWidth = Dimensions.get("window").width;
   _isMount = false;
@@ -27,6 +29,8 @@ export default class Home extends Component {
     recentMovies: [],
     popularMovies: [],
     recentMovies: [],
+    queryResult: [],
+    query: "",
     iconName: "magnify",
     isAnimating: false,
     fadeAnim: new Animated.Value(40),
@@ -36,6 +40,52 @@ export default class Home extends Component {
     super(props);
     this.genres = props.genres;
   }
+
+  searchData = (query) => {
+    return fetch(
+      "https://api.themoviedb.org/3/search/movie?api_key=" +
+        this.apiKey +
+        "&language=en-US&query=" +
+        query
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        const moviedata = [];
+        var allgenres = this.genres;
+        responseJson.results.forEach((movie) => {
+          movie.genres = [];
+          movie.genre_ids.forEach((genreid) => {
+            var genreData = allgenres.filter((x) => x.id == genreid);
+            if (genreData.length != 0) {
+              movie.genres.push(genreData[0].name);
+            }
+          });
+
+          moviedata.push(
+            new Movie({
+              id: movie.id,
+              title: movie.title,
+              poster_path:
+                movie.poster_path == null
+                  ? "https://lightning.od-cdn.com/25.2.6-build-2536-master/public/img/no-cover_en_US.jpg"
+                  : "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
+              backdrop_path:
+                "http://image.tmdb.org/t/p/w500/" + movie.backdrop_path,
+              genre_ids: movie.genre_ids,
+              overview: movie.overview,
+              popularity: movie.popularity,
+              release_date: movie.release_date,
+              vote_average: movie.vote_average,
+              vote_count: movie.vote_count,
+              genres: movie.genres,
+            })
+          );
+
+          this.setState({ query: query, queryResult: moviedata });
+        });
+      })
+      .catch((error) => console.error(error));
+  };
 
   componentDidMount() {
     this._isMount = true;
@@ -50,7 +100,6 @@ export default class Home extends Component {
           movie.genre_ids.forEach((genreid) => {
             var genreData = allgenres.filter((x) => x.id == genreid);
             if (genreData.length != 0) {
-              //console.log(genreData[0].name);
               movie.genres.push(genreData[0].name);
             }
           });
@@ -60,7 +109,9 @@ export default class Home extends Component {
               id: movie.id,
               title: movie.title,
               poster_path:
-                "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
+                movie.poster_path == null
+                  ? "https://lightning.od-cdn.com/25.2.6-build-2536-master/public/img/no-cover_en_US.jpg"
+                  : "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
               backdrop_path:
                 "http://image.tmdb.org/t/p/w500/" + movie.backdrop_path,
               genre_ids: movie.genre_ids,
@@ -90,7 +141,6 @@ export default class Home extends Component {
               movie.genre_ids.forEach((genreid) => {
                 var genreData = allgenres.filter((x) => x.id == genreid);
                 if (genreData.length != 0) {
-                  //console.log(genreData[0].name);
                   movie.genres.push(genreData[0].name);
                 }
               });
@@ -99,7 +149,9 @@ export default class Home extends Component {
                   id: movie.id,
                   title: movie.title,
                   poster_path:
-                    "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
+                    movie.poster_path == null
+                      ? "https://lightning.od-cdn.com/25.2.6-build-2536-master/public/img/no-cover_en_US.jpg"
+                      : "http://image.tmdb.org/t/p/w342/" + movie.poster_path,
                   backdrop_path:
                     "http://image.tmdb.org/t/p/w500/" + movie.backdrop_path,
                   genre_ids: movie.genre_ids,
@@ -145,7 +197,7 @@ export default class Home extends Component {
           duration: 500,
           useNativeDriver: false,
         }).start(() => {
-          this.setState({ iconName: "magnify" });
+          this.setState({ iconName: "magnify", query: "", queryResult: [] });
           this.setState({ isAnimating: false });
         });
   };
@@ -208,8 +260,77 @@ export default class Home extends Component {
                   {this.renderRectangle(context)}
                 </View>
               </View>
+              {!this.state.isAnimating && this.state.iconName == "close" ? (
+                <Autocomplete
+                  style={{
+                    backgroundColor: "transparent",
+                    fontFamily: "poppins-l",
+                  }}
+                  data={this.state.queryResult}
+                  style
+                  placeholder="Enter movie name"
+                  autoFocus={true}
+                  placeholderTextColor={isDarkMode ? light.bg : dark.bg}
+                  keyExtractor={(item, i) => item.id.toString()}
+                  containerStyle={{
+                    paddingHorizontal: 20,
+                    position: "absolute",
+                    top: 40,
+                    paddingLeft: 60,
+                    height: 40,
+                    width: "100%",
+                  }}
+                  inputContainerStyle={{
+                    borderWidth: 0,
+                    height: 40,
+                    zIndex: 999,
+                  }}
+                  listStyle={{
+                    maxHeight: 300,
+                    zIndex: 999,
+                  }}
+                  onChangeText={(text) => {
+                    this.searchData(text);
+                  }}
+                  renderItem={({ item, i }) => (
+                    <TouchableWithoutFeedback
+                      onPress={() => {
+                        this.props.navigation.navigate("MovieDetail", {
+                          item: item,
+                        });
+                      }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          marginBottom: 10,
+                        }}
+                      >
+                        <Image
+                          style={{ width: 38, height: 57 }}
+                          source={{ uri: item.poster_path }}
+                        />
+                        <View
+                          style={{
+                            flexWrap: "wrap",
+                            flexDirection: "column",
+                            marginLeft: 5,
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Text>{item.title}</Text>
+                          <Text>{item.release_date}</Text>
+                        </View>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  )}
+                />
+              ) : (
+                <View />
+              )}
 
-              <ScrollView>
+              <ScrollView scrollEnabled={this.state.query == "" ? true : false}>
                 <View
                   style={{
                     flexDirection: "row",
@@ -260,6 +381,7 @@ export default class Home extends Component {
                 </View>
                 <ScrollView
                   horizontal={true}
+                  scrollEnabled={this.state.query == "" ? true : false}
                   showsHorizontalScrollIndicator={false}
                 >
                   <View
@@ -359,13 +481,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
+    zIndex: 3,
   },
   title: {
     fontSize: 22,
     fontFamily: "poppins-sb",
   },
   rectangle: {
-    backgroundColor: "#2c3e50",
     height: 40,
   },
 });
