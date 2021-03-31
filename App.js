@@ -8,9 +8,23 @@ import MovieDetail from "./app/pages/MovieDetail";
 import * as Font from "expo-font";
 import ThemeContextProvider from "./app/contexts/ThemeContext";
 import ViewAll from "./app/pages/ViewAll";
+import AppIntro from "./app/pages/AppIntro";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const Stack = createStackNavigator();
 export default function App() {
   const [fontsLoaded, setFontLoaded] = React.useState(false);
+  const [initialPage, setInitialPage] = React.useState("MainRoot");
+
+  const getPage = async () => {
+    try {
+      const value = await AsyncStorage.getItem("isFirstRun");
+      if (value == "true" || value == null) {
+        setInitialPage("AppIntro");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
@@ -28,8 +42,10 @@ export default function App() {
         setFontLoaded(true);
       }
     }
-
-    loadResourcesAndDataAsync();
+    //AsyncStorage.clear();
+    //setInitialPage("AppIntro");
+    //loadResourcesAndDataAsync();
+    getPage().then(() => loadResourcesAndDataAsync());
   }, []);
 
   if (!fontsLoaded) {
@@ -40,6 +56,7 @@ export default function App() {
       <StatusBar style="auto" />
       <NavigationContainer>
         <Stack.Navigator
+          initialRouteName={initialPage}
           screenOptions={{
             headerShown: false,
           }}
@@ -47,7 +64,9 @@ export default function App() {
           <Stack.Screen
             name="MainRoot"
             component={MainRoot}
-            options={{ title: "MainRoot" }}
+            options={{
+              title: "MainRoot",
+            }}
           />
           <Stack.Screen
             name="MovieDetail"
@@ -58,6 +77,12 @@ export default function App() {
             name="ViewAll"
             component={ViewAll}
             options={{ title: "ViewAll" }}
+          />
+
+          <Stack.Screen
+            name="AppIntro"
+            component={AppIntro}
+            options={{ title: "AppIntro" }}
           />
         </Stack.Navigator>
       </NavigationContainer>

@@ -7,6 +7,7 @@ class ThemeContextProvider extends Component {
       const value = await AsyncStorage.getItem("isDarkMode");
       if (value == null) {
         await AsyncStorage.setItem("isDarkMode", "false");
+        await AsyncStorage.setItem("isFirstRun", "true");
       } else {
         if (value == "true") {
           this.setState({ isDarkMode: true });

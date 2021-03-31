@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { StyleSheet, ActivityIndicator, SafeAreaView } from "react-native";
+import {
+  StyleSheet,
+  ActivityIndicator,
+  SafeAreaView,
+  Alert,
+} from "react-native";
 import Constants from "expo-constants";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "./../pages/Home";
@@ -10,10 +15,15 @@ import * as SQLite from "expo-sqlite";
 import { ThemeContext } from "../contexts/ThemeContext";
 const Tab = createBottomTabNavigator();
 const db = SQLite.openDatabase("movie.db");
-
 class MainRoot extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    //TODO: Disable go back [https://reactnavigation.org/docs/preventing-going-back/]
+    props.navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+      return;
+    });
 
     this.state = {
       isLoading: true,

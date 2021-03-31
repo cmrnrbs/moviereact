@@ -31,7 +31,6 @@ export default function Favorite({ navigation, route }) {
     const unsubscribe = navigation.addListener("focus", () => {
       fetchSqliteData();
     });
-
     return unsubscribe;
   }, [navigation]);
 
