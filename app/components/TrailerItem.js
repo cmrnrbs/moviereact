@@ -11,7 +11,7 @@ function TrailerItem(props) {
   const posterWidth = (deviceWidth - 50) / 2;
   const leftPosition = (posterWidth - 24) / 2;
   const marginValue = props.itemIndex % 2 == 0 ? 10 : 0;
-
+  const { isDarkMode, light, dark } = props.context;
   const thumbnail =
     "https://img.youtube.com/vi/" + props.data.key + "/hqdefault.jpg";
   return (
@@ -46,6 +46,7 @@ function TrailerItem(props) {
             width: posterWidth,
             fontSize: 12,
             fontFamily: "poppins-r",
+            color: isDarkMode ? light.bg : dark.bg,
           }}
         >
           {props.data.name}

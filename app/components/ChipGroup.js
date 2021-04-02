@@ -1,14 +1,23 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 function ChipGroup(props) {
+  const { isDarkMode, light, dark } = props.context;
   return (
     <View style={styles.itemGroup}>
       {props.datas.map((item, index) => {
         return (
-          <View style={styles.chipitem} key={index}>
+          <View
+            style={[
+              styles.chipitem,
+              {
+                borderColor: isDarkMode ? light.bg : "#0E0E0E",
+              },
+            ]}
+            key={index}
+          >
             <Text
               style={{
-                color: "#222",
+                color: isDarkMode ? light.bg : "#222",
                 fontFamily: "poppins-r",
                 fontSize: 11,
               }}
@@ -28,7 +37,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   chipitem: {
-    borderColor: "#0E0E0E",
     borderWidth: 1.5,
     justifyContent: "center",
     alignItems: "center",

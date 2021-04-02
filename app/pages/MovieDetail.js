@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Modal,
+  StatusBar,
 } from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
 import Constants from "expo-constants";
@@ -17,6 +18,8 @@ import TrailerItem from "../components/TrailerItem";
 import * as SQLite from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 import { IMLocalized } from "../IMLocalized";
+import { LinearGradient } from "expo-linear-gradient";
+import { ThemeContext } from "../contexts/ThemeContext";
 const db = SQLite.openDatabase("movie.db");
 class MovieDetail extends Component {
   movieItem = null;
@@ -152,155 +155,243 @@ class MovieDetail extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Modal
-          style={{ position: "absolute", top: 0 }}
-          animationType="slide"
-          transparent={true}
-          statusBarTranslucent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            this.setState({ modalVisible: false });
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#000",
-            }}
-          >
-            <TouchableWithoutFeedback
-              onPress={() => this.setState({ modalVisible: false })}
-            >
-              <View
-                style={{
-                  backgroundColor: "#222",
-                  width: 48,
-                  height: 48,
-                  position: "absolute",
-                  top: Constants.statusBarHeight + 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  left: 20,
-                  borderRadius: 10,
+      <ThemeContext.Consumer>
+        {(context) => {
+          const { isDarkMode, light, dark } = context;
+          return (
+            <View style={styles.container}>
+              <StatusBar style={isDarkMode ? "light" : "dark"} />
+              <Modal
+                style={{ position: "absolute", top: 0 }}
+                animationType="slide"
+                transparent={true}
+                statusBarTranslucent={true}
+                visible={this.state.modalVisible}
+                onRequestClose={() => {
+                  this.setState({ modalVisible: false });
                 }}
               >
-                <MaterialCommunityIcons
-                  name="close"
-                  size={20}
-                  color={"white"}
-                />
-              </View>
-            </TouchableWithoutFeedback>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#000",
+                  }}
+                >
+                  <TouchableWithoutFeedback
+                    onPress={() => this.setState({ modalVisible: false })}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: "#222",
+                        width: 48,
+                        height: 48,
+                        position: "absolute",
+                        top: Constants.statusBarHeight + 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        left: 20,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="close"
+                        size={20}
+                        color={"white"}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
 
-            <View style={{ width: "100%" }}>
-              <YoutubePlayer
-                play={true}
-                height={270}
-                videoId={this.state.activeMovieTrailerKey}
+                  <View style={{ width: "100%" }}>
+                    <YoutubePlayer
+                      play={true}
+                      height={270}
+                      videoId={this.state.activeMovieTrailerKey}
+                    />
+                  </View>
+                </View>
+              </Modal>
+              <Image
+                style={styles.poster}
+                resizeMode={"cover"}
+                source={{
+                  uri: this.movieItem.backdrop_path,
+                }}
               />
-            </View>
-          </View>
-        </Modal>
-        <ScrollView>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              this.props.navigation.setParams({
-                query: "someText",
-              });
-              this.props.navigation.pop();
-            }}
-          >
-            <MaterialCommunityIcons
-              style={{
-                position: "absolute",
-                top: Constants.statusBarHeight + 10,
-                left: 10,
-                zIndex: 1,
-                paddingRight: 20,
-                paddingBottom: 20,
-              }}
-              name="chevron-left"
-              size={24}
-              color={"#fff"}
-            />
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
-            onPress={() => this.favoriteProcess(this.movieItem)}
-          >
-            <MaterialCommunityIcons
-              style={{
-                position: "absolute",
-                top: Constants.statusBarHeight + 10,
-                right: 10,
-                zIndex: 1,
-                paddingLeft: 20,
-                paddingBottom: 20,
-              }}
-              name={this.state.isFavorite ? "heart" : "heart-outline"}
-              size={24}
-              color={"#fff"}
-            />
-          </TouchableWithoutFeedback>
-          <Image
-            style={styles.poster}
-            resizeMode={"cover"}
-            source={{
-              uri: this.movieItem.backdrop_path,
-            }}
-          />
-          <View style={{ flex: 1, padding: 20 }}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 10,
-              }}
-            >
-              <View style={{ flexWrap: "wrap", flexDirection: "column" }}>
-                <Text style={styles.title}>{this.movieItem.title}</Text>
-                <Text style={styles.subtitle}>
-                  {this.movieItem.release_date}
-                </Text>
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <LinearGradient
+                  colors={[
+                    "#ffffff03",
+                    isDarkMode ? dark.bg : light.bg,
+                    isDarkMode ? "#000" : light.bg,
+                  ]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 0.7 }}
+                  style={{ height: "100%" }}
+                ></LinearGradient>
               </View>
-              <View style={styles.ratingBadge}>
-                <Text style={styles.rating}>{this.movieItem.vote_average}</Text>
-              </View>
-            </View>
 
-            <ChipGroup datas={this.movieItem.genres} />
-
-            <Text style={styles.header}>{IMLocalized("overview")}</Text>
-            <Text style={{ fontFamily: "poppins-l" }}>
-              {this.movieItem.overview}
-            </Text>
-            <Text style={styles.header}>{IMLocalized("teaserstrailers")}</Text>
-            <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-              {this.state.teaserTrailers.map((item, index) => {
-                return (
-                  <TrailerItem
-                    poster={this.movieItem.backdrop_path}
-                    key={item.key}
-                    onPressFunction={() => {
-                      this.setState({
-                        modalVisible: true,
-                        activeMovieTrailerKey: item.key,
-                      });
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    this.props.navigation.pop();
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    style={{
+                      position: "absolute",
+                      top: Constants.statusBarHeight + 10,
+                      left: 10,
+                      zIndex: 1,
+                      paddingRight: 20,
+                      paddingBottom: 20,
                     }}
-                    data={item}
-                    modalVisible={this.state.modalVisible}
-                    itemIndex={index}
+                    name="chevron-left"
+                    size={24}
+                    color={isDarkMode ? light.bg : dark.bg}
                   />
-                );
-              })}
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback
+                  onPress={() => this.favoriteProcess(this.movieItem)}
+                >
+                  <MaterialCommunityIcons
+                    style={{
+                      position: "absolute",
+                      top: Constants.statusBarHeight + 10,
+                      right: 10,
+                      zIndex: 1,
+                      paddingLeft: 20,
+                      paddingBottom: 20,
+                    }}
+                    name={this.state.isFavorite ? "heart" : "heart-outline"}
+                    size={24}
+                    color={isDarkMode ? light.bg : dark.bg}
+                  />
+                </TouchableWithoutFeedback>
+                <ScrollView>
+                  <View style={styles.posterSpace} />
+                  <View style={{ flex: 1, padding: 20 }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 10,
+                      }}
+                    >
+                      <View
+                        style={{ flexWrap: "wrap", flexDirection: "column" }}
+                      >
+                        <Text
+                          style={[
+                            styles.title,
+                            { color: isDarkMode ? light.bg : dark.bg },
+                          ]}
+                        >
+                          {this.movieItem.title}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.subtitle,
+                            { color: isDarkMode ? light.bg : dark.bg },
+                          ]}
+                        >
+                          {this.movieItem.release_date}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          styles.ratingBadge,
+                          {
+                            backgroundColor: isDarkMode ? light.bg : dark.bg,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.rating,
+                            { color: isDarkMode ? dark.bg : light.bg },
+                          ]}
+                        >
+                          {this.movieItem.vote_average}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <ChipGroup
+                      datas={this.movieItem.genres}
+                      context={context}
+                    />
+                    <Text
+                      style={[
+                        styles.header,
+                        { color: isDarkMode ? light.bg : dark.bg },
+                      ]}
+                    >
+                      {IMLocalized("overview")}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: "poppins-l",
+                        fontSize: 15,
+                        textAlign: "justify",
+                        color: isDarkMode ? light.bg : dark.bg,
+                      }}
+                    >
+                      {this.movieItem.overview}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.header,
+                        { color: isDarkMode ? light.bg : dark.bg },
+                      ]}
+                    >
+                      {IMLocalized("teaserstrailers")}
+                    </Text>
+                    <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
+                      {this.state.teaserTrailers.map((item, index) => {
+                        return (
+                          <TrailerItem
+                            poster={this.movieItem.backdrop_path}
+                            key={item.key}
+                            context={context}
+                            onPressFunction={() => {
+                              this.setState({
+                                modalVisible: true,
+                                activeMovieTrailerKey: item.key,
+                              });
+                            }}
+                            data={item}
+                            modalVisible={this.state.modalVisible}
+                            itemIndex={index}
+                          />
+                        );
+                      })}
+                    </View>
+                  </View>
+                </ScrollView>
+              </View>
             </View>
-          </View>
-        </ScrollView>
-      </View>
+          );
+        }}
+      </ThemeContext.Consumer>
     );
   }
 }
@@ -312,11 +403,11 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontFamily: "poppins-sb",
+    marginTop: 4,
   },
   ratingBadge: {
     width: 48,
     height: 48,
-    backgroundColor: "#999",
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
@@ -327,6 +418,9 @@ const styles = StyleSheet.create({
   },
   poster: {
     height: 281,
+  },
+  posterSpace: {
+    height: 271,
   },
   title: {
     fontSize: 17,
