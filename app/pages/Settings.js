@@ -12,18 +12,19 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
+import { IMLocalized } from "../IMLocalized";
 export default class Settings extends Component {
   showLicenses = () =>
     Alert.alert(
-      "Privacy Policy",
+      IMLocalized("privacypolicy"),
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
       [
         {
-          text: "Cancel",
+          text: IMLocalized("cancel"),
           style: "cancel",
         },
         {
-          text: "Ok",
+          text: IMLocalized("ok"),
           style: "ok",
         },
       ],
@@ -51,7 +52,7 @@ export default class Settings extends Component {
                   { color: isDarkMode ? light.bg : dark.bg },
                 ]}
               >
-                Settings
+                {IMLocalized("settings")}
               </Text>
               <View style={styles.settingsItem}>
                 <View style={styles.settingsItem2}>
@@ -68,7 +69,7 @@ export default class Settings extends Component {
                       color: isDarkMode ? light.bg : dark.bg,
                     }}
                   >
-                    Dark Mode
+                    {IMLocalized("darkmode")}
                   </Text>
                 </View>
                 <Switch
@@ -85,7 +86,7 @@ export default class Settings extends Component {
                 <View style={[styles.settingsItem2, { paddingHorizontal: 20 }]}>
                   <MaterialCommunityIcons
                     name="book-open-outline"
-                    size={26}
+                    size={24}
                     color={isDarkMode ? light.bg : dark.bg}
                   />
                   <Text
@@ -96,10 +97,49 @@ export default class Settings extends Component {
                       color: isDarkMode ? light.bg : dark.bg,
                     }}
                   >
-                    Privacy Policy
+                    {IMLocalized("privacypolicy")}
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
+              <View
+                style={[
+                  styles.settingsItem2,
+                  { paddingHorizontal: 20, marginBottom: 10 },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name="account-outline"
+                  size={26}
+                  color={isDarkMode ? light.bg : dark.bg}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    flex: 1,
+                  }}
+                >
+                  <Text
+                    style={{
+                      marginLeft: 10,
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    {IMLocalized("author")}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    Cemre Onur BAŞ
+                  </Text>
+                </View>
+              </View>
               <View style={[styles.settingsItem2, { paddingHorizontal: 20 }]}>
                 <MaterialCommunityIcons
                   name="information-outline"
@@ -121,7 +161,7 @@ export default class Settings extends Component {
                       color: isDarkMode ? light.bg : dark.bg,
                     }}
                   >
-                    Version
+                    {IMLocalized("version")}
                   </Text>
                   <Text
                     style={{

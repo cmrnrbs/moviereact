@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 import DotIndicator from "../components/DotIndicator";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IMLocalized } from "./../IMLocalized";
 function AppIntro(props) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   return (
@@ -15,7 +16,7 @@ function AppIntro(props) {
         initialPage={0}
       >
         <View key="1" style={styles.page}>
-          <Text style={styles.title}>Çevrimdışı Veritabanı</Text>
+          <Text style={styles.title}>{IMLocalized("page1_title")}</Text>
           <View style={styles.circle}>
             <Image
               style={{ width: 48, height: 48, tintColor: "white" }}
@@ -23,22 +24,23 @@ function AppIntro(props) {
             />
           </View>
           <Text style={styles.subtitle}>
-            Kendi favori listenizi oluşturarak{"\n"}internet olmadan listenizde
-            gezinin.
+            {IMLocalized("page1_description")}
           </Text>
         </View>
         <View key="2" style={styles.page}>
-          <Text style={styles.title}>Milyonlarca Film</Text>
+          <Text style={styles.title}>{IMLocalized("page2_title")}</Text>
           <View style={styles.circle}>
             <Image
               style={{ width: 48, height: 48, tintColor: "white" }}
               source={require("./../assets/movies.png")}
             />
           </View>
-          <Text style={styles.subtitle}>Milyonlarca filme anında ulaşın</Text>
+          <Text style={styles.subtitle}>
+            {IMLocalized("page2_description")}
+          </Text>
         </View>
         <View key="3" style={styles.page}>
-          <Text style={styles.title}>Çevirme Özgürlüğü</Text>
+          <Text style={styles.title}>{IMLocalized("page3_title")}</Text>
           <View style={styles.circle}>
             <Image
               style={{ width: 48, height: 48, tintColor: "white" }}
@@ -46,11 +48,11 @@ function AppIntro(props) {
             />
           </View>
           <Text style={styles.subtitle}>
-            Anlamadığınız film detaylarını tek dokunuşla kendi dilinize çevirin'
+            {IMLocalized("page3_description")}
           </Text>
         </View>
         <View key="4" style={styles.page}>
-          <Text style={styles.title}>Gece Modu</Text>
+          <Text style={styles.title}>{IMLocalized("page4_title")}</Text>
           <View style={styles.circle}>
             <Image
               style={{ width: 48, height: 48, tintColor: "white" }}
@@ -58,11 +60,11 @@ function AppIntro(props) {
             />
           </View>
           <Text style={styles.subtitle}>
-            Geceleri gözünüzü yormadan rahatça gezinin
+            {IMLocalized("page4_description")}
           </Text>
         </View>
         <View key="5" style={styles.page}>
-          <Text style={styles.title}>Önceden Bildirim</Text>
+          <Text style={styles.title}>{IMLocalized("page5_title")}</Text>
           <View style={styles.circle}>
             <Image
               style={{ width: 48, height: 48, tintColor: "white" }}
@@ -70,8 +72,7 @@ function AppIntro(props) {
             />
           </View>
           <Text style={styles.subtitle}>
-            Favori listenizdeki filmeler vizyon{"\n"}tarihinden önce size bilgim
-            gelsin.
+            {IMLocalized("page5_description")}
           </Text>
           <TouchableWithoutFeedback
             onPress={async () => {
@@ -81,7 +82,7 @@ function AppIntro(props) {
           >
             <View style={styles.button}>
               <Text style={{ color: "white", fontFamily: "poppins-l" }}>
-                HADİ BAŞLAYALIM
+                {IMLocalized("getstarted")}
               </Text>
             </View>
           </TouchableWithoutFeedback>

@@ -9,6 +9,7 @@ import RecentMovieItem from "../components/RecentMovieItem";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StatusBar } from "expo-status-bar";
 import { ThemeContext } from "../contexts/ThemeContext";
+import { IMLocalized } from "../IMLocalized";
 const db = SQLite.openDatabase("movie.db");
 export default function Favorite({ navigation, route }) {
   const [data, setData] = useState(null);
@@ -69,7 +70,7 @@ export default function Favorite({ navigation, route }) {
                       { color: isDarkMode ? light.bg : dark.bg },
                     ]}
                   >
-                    No Data Found
+                    {IMLocalized("nodatafound")}
                   </Text>
                 </View>
               </View>
@@ -96,7 +97,7 @@ export default function Favorite({ navigation, route }) {
                     { color: isDarkMode ? light.bg : dark.bg },
                   ]}
                 >
-                  Favorite
+                  {IMLocalized("favorites")}
                 </Text>
                 <ScrollView style={{ paddingHorizontal: 20 }}>
                   {data.map((item) => {

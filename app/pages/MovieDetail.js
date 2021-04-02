@@ -16,6 +16,7 @@ import TeaserTrailer from "./../models/TeaserTrailer";
 import TrailerItem from "../components/TrailerItem";
 import * as SQLite from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
+import { IMLocalized } from "../IMLocalized";
 const db = SQLite.openDatabase("movie.db");
 class MovieDetail extends Component {
   movieItem = null;
@@ -273,11 +274,11 @@ class MovieDetail extends Component {
 
             <ChipGroup datas={this.movieItem.genres} />
 
-            <Text style={styles.header}>Overview</Text>
+            <Text style={styles.header}>{IMLocalized("overview")}</Text>
             <Text style={{ fontFamily: "poppins-l" }}>
               {this.movieItem.overview}
             </Text>
-            <Text style={styles.header}>Teasers & Trailers</Text>
+            <Text style={styles.header}>{IMLocalized("teaserstrailers")}</Text>
             <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
               {this.state.teaserTrailers.map((item, index) => {
                 return (

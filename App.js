@@ -11,6 +11,7 @@ import ViewAll from "./app/pages/ViewAll";
 import AppIntro from "./app/pages/AppIntro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const Stack = createStackNavigator();
+import { IMLocalized, init } from "./app/IMLocalized";
 export default function App() {
   const [fontsLoaded, setFontLoaded] = React.useState(false);
   const [initialPage, setInitialPage] = React.useState("MainRoot");
@@ -51,6 +52,7 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+  init();
   return (
     <ThemeContextProvider>
       <StatusBar style="auto" />

@@ -13,6 +13,7 @@ import Settings from "./../pages/Settings";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as SQLite from "expo-sqlite";
 import { ThemeContext } from "../contexts/ThemeContext";
+import { IMLocalized } from "../IMLocalized";
 const Tab = createBottomTabNavigator();
 const db = SQLite.openDatabase("movie.db");
 class MainRoot extends Component {
@@ -45,6 +46,12 @@ class MainRoot extends Component {
     )
       .then((response) => response.json())
       .then((responseJson) => {
+        //TODO: Localize for Genres
+        responseJson.genres.map((genre) => {
+          const key = genre.name.toString().toLowerCase().replace(" ", "");
+          genre.name = IMLocalized(key);
+        });
+
         this.setState({
           isLoading: false,
           genres: responseJson.genres,
@@ -91,7 +98,7 @@ class MainRoot extends Component {
             >
               <Tab.Screen
                 options={{
-                  tabBarLabel: "Home",
+                  tabBarLabel: IMLocalized("home"),
                   tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons
                       name="home"
@@ -100,12 +107,12 @@ class MainRoot extends Component {
                     />
                   ),
                 }}
-                name="Home"
+                name={IMLocalized("home")}
                 component={HomeComponent}
               />
               <Tab.Screen
                 options={{
-                  tabBarLabel: "Favorite",
+                  tabBarLabel: IMLocalized("favorites"),
                   tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons
                       name="heart"
@@ -114,12 +121,12 @@ class MainRoot extends Component {
                     />
                   ),
                 }}
-                name="Favorite"
+                name={IMLocalized("favorites")}
                 component={Favorite}
               />
               <Tab.Screen
                 options={{
-                  tabBarLabel: "Settings",
+                  tabBarLabel: IMLocalized("settings"),
                   tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons
                       name="cog"
@@ -128,7 +135,7 @@ class MainRoot extends Component {
                     />
                   ),
                 }}
-                name="Settings"
+                name={IMLocalized("settings")}
                 component={Settings}
               />
             </Tab.Navigator>

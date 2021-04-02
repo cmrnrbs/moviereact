@@ -18,6 +18,7 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import { StatusBar } from "expo-status-bar";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Autocomplete from "react-native-autocomplete-input";
+import { IMLocalized } from "../IMLocalized";
 export default class Home extends Component {
   deviceWidth = Dimensions.get("window").width;
   _isMount = false;
@@ -266,7 +267,7 @@ export default class Home extends Component {
                     fontFamily: "poppins-l",
                   }}
                   data={this.state.queryResult}
-                  placeholder="Enter movie name"
+                  placeholder={IMLocalized("searchhint")}
                   autoFocus={true}
                   placeholderTextColor={isDarkMode ? light.bg : dark.bg}
                   keyExtractor={(item, i) => item.id.toString()}
@@ -343,7 +344,7 @@ export default class Home extends Component {
                       color: isDarkMode ? light.bg : dark.bg,
                     }}
                   >
-                    Popular Movies
+                    {IMLocalized("popularmovies")}
                   </Text>
                   <TouchableWithoutFeedback
                     onPress={() =>
@@ -366,7 +367,7 @@ export default class Home extends Component {
                           color: isDarkMode ? light.bg : dark.bg,
                         }}
                       >
-                        View All
+                        {IMLocalized("viewall")}
                       </Text>
                       <MaterialCommunityIcons
                         name="chevron-right"
@@ -412,7 +413,7 @@ export default class Home extends Component {
                       color: isDarkMode ? light.bg : dark.bg,
                     }}
                   >
-                    Recent Movies
+                    {IMLocalized("recentmovies")}
                   </Text>
                   <TouchableWithoutFeedback
                     onPress={() =>
@@ -435,7 +436,7 @@ export default class Home extends Component {
                           color: isDarkMode ? light.bg : dark.bg,
                         }}
                       >
-                        View All
+                        {IMLocalized("viewall")}
                       </Text>
                       <MaterialCommunityIcons
                         name="chevron-right"

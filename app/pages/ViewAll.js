@@ -13,6 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Constants from "expo-constants";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { IMLocalized } from "../IMLocalized";
 class ViewAll extends Component {
   baseUrl = "http://api.themoviedb.org/3/movie/";
   apiKey = "802b2c4b88ea1183e50e6b285a27696e";
@@ -142,7 +143,9 @@ class ViewAll extends Component {
                         { color: isDarkMode ? light.bg : dark.bg },
                       ]}
                     >
-                      View All
+                      {this.props.route.params.isPopular
+                        ? IMLocalized("popularmovies")
+                        : IMLocalized("recentmovies")}
                     </Text>
                   </View>
                 </TouchableWithoutFeedback>
