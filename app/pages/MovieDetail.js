@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Modal,
   StatusBar,
+  Dimensions,
 } from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
 import Constants from "expo-constants";
@@ -20,13 +21,20 @@ import * as FileSystem from "expo-file-system";
 import { IMLocalized } from "../IMLocalized";
 import { LinearGradient } from "expo-linear-gradient";
 import { ThemeContext } from "../contexts/ThemeContext";
+import Cast from "./../models/Cast";
+import CastItem from "../components/CastItem";
 const db = SQLite.openDatabase("movie.db");
 class MovieDetail extends Component {
   movieItem = null;
+  baseUrl = "http://api.themoviedb.org/3/movie/";
+  apiKey = "802b2c4b88ea1183e50e6b285a27696e";
+  scrollHeight = 0;
   constructor(props) {
     super(props);
     this.movieItem = props.route.params.item;
     this.readMovieData(this.movieItem);
+    var topSpace = Constants.statusBarHeight + 10 + 48;
+    this.scrollHeight = Dimensions.get("screen").height - topSpace - 70;
   }
 
   state = {
@@ -34,6 +42,7 @@ class MovieDetail extends Component {
     activeMovieTrailerKey: "",
     modalVisible: false,
     isFavorite: false,
+    castResults: [],
   };
 
   readMovieData(data) {
@@ -131,9 +140,7 @@ class MovieDetail extends Component {
 
   componentDidMount() {
     return fetch(
-      "http://api.themoviedb.org/3/movie/" +
-        this.movieItem.id +
-        "/videos?api_key=802b2c4b88ea1183e50e6b285a27696e"
+      this.baseUrl + this.movieItem.id + "/videos?api_key=" + this.apiKey
     )
       .then((response) => response.json())
       .then((responseJson) => {
@@ -149,6 +156,26 @@ class MovieDetail extends Component {
         });
 
         this.setState({ teaserTrailers: items });
+
+        fetch(
+          this.baseUrl + this.movieItem.id + "/credits?api_key=" + this.apiKey
+        )
+          .then((response) => response.json())
+          .then((responseJson) => {
+            var casts = [];
+            responseJson.cast.map((cast) => {
+              casts.push(
+                new Cast({
+                  id: cast.id,
+                  name: cast.name,
+                  profile_path: cast.profile_path,
+                  character: cast.character,
+                })
+              );
+            });
+            this.setState({ castResults: casts });
+          })
+          .catch((error) => console.error(error));
       })
       .catch((error) => console.error(error));
   }
@@ -284,109 +311,180 @@ class MovieDetail extends Component {
                     color={isDarkMode ? light.bg : dark.bg}
                   />
                 </TouchableWithoutFeedback>
-                <ScrollView>
-                  <View style={styles.posterSpace} />
-                  <View style={{ flex: 1, padding: 20 }}>
+                <View
+                  style={{
+                    marginTop: 70,
+                    height: this.scrollHeight,
+                  }}
+                >
+                  <ScrollView>
+                    <View style={styles.posterSpace} />
                     <View
                       style={{
                         flex: 1,
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 10,
+                        padding: 20,
                       }}
                     >
                       <View
-                        style={{ flexWrap: "wrap", flexDirection: "column" }}
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 10,
+                        }}
                       >
-                        <Text
+                        <View
+                          style={{ flexWrap: "wrap", flexDirection: "column" }}
+                        >
+                          <Text
+                            style={[
+                              styles.title,
+                              { color: isDarkMode ? light.bg : dark.bg },
+                            ]}
+                          >
+                            {this.movieItem.title}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.subtitle,
+                              { color: isDarkMode ? light.bg : dark.bg },
+                            ]}
+                          >
+                            {this.movieItem.release_date}
+                          </Text>
+                        </View>
+                        <View
                           style={[
-                            styles.title,
-                            { color: isDarkMode ? light.bg : dark.bg },
+                            styles.ratingBadge,
+                            {
+                              backgroundColor: isDarkMode ? light.bg : dark.bg,
+                            },
                           ]}
                         >
-                          {this.movieItem.title}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.subtitle,
-                            { color: isDarkMode ? light.bg : dark.bg },
-                          ]}
-                        >
-                          {this.movieItem.release_date}
-                        </Text>
+                          <Text
+                            style={[
+                              styles.rating,
+                              { color: isDarkMode ? dark.bg : light.bg },
+                            ]}
+                          >
+                            {this.movieItem.vote_average}
+                          </Text>
+                        </View>
                       </View>
-                      <View
+
+                      <ChipGroup
+                        datas={this.movieItem.genres}
+                        context={context}
+                      />
+                      <Text
                         style={[
-                          styles.ratingBadge,
-                          {
-                            backgroundColor: isDarkMode ? light.bg : dark.bg,
-                          },
+                          styles.header,
+                          { color: isDarkMode ? light.bg : dark.bg },
                         ]}
                       >
+                        {IMLocalized("overview")}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "poppins-l",
+                          fontSize: 15,
+                          textAlign: "justify",
+                          color: isDarkMode ? light.bg : dark.bg,
+                        }}
+                      >
+                        {this.movieItem.overview}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.header,
+                          { color: isDarkMode ? light.bg : dark.bg },
+                        ]}
+                      >
+                        {IMLocalized("teaserstrailers")}
+                      </Text>
+                      <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
+                        {this.state.teaserTrailers.map((item, index) => {
+                          return (
+                            <TrailerItem
+                              poster={this.movieItem.backdrop_path}
+                              key={item.key}
+                              context={context}
+                              onPressFunction={() => {
+                                this.setState({
+                                  modalVisible: true,
+                                  activeMovieTrailerKey: item.key,
+                                });
+                              }}
+                              data={item}
+                              modalVisible={this.state.modalVisible}
+                              itemIndex={index}
+                            />
+                          );
+                        })}
+                      </View>
+                      <View
+                        style={{
+                          justifyContent: "space-between",
+                          flexDirection: "row",
+                          flex: 1,
+                          alignItems: "center",
+                        }}
+                      >
                         <Text
                           style={[
-                            styles.rating,
-                            { color: isDarkMode ? dark.bg : light.bg },
+                            styles.header,
+                            { color: isDarkMode ? light.bg : dark.bg },
                           ]}
                         >
-                          {this.movieItem.vote_average}
+                          {IMLocalized("casts")}
                         </Text>
-                      </View>
-                    </View>
-
-                    <ChipGroup
-                      datas={this.movieItem.genres}
-                      context={context}
-                    />
-                    <Text
-                      style={[
-                        styles.header,
-                        { color: isDarkMode ? light.bg : dark.bg },
-                      ]}
-                    >
-                      {IMLocalized("overview")}
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: "poppins-l",
-                        fontSize: 15,
-                        textAlign: "justify",
-                        color: isDarkMode ? light.bg : dark.bg,
-                      }}
-                    >
-                      {this.movieItem.overview}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.header,
-                        { color: isDarkMode ? light.bg : dark.bg },
-                      ]}
-                    >
-                      {IMLocalized("teaserstrailers")}
-                    </Text>
-                    <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-                      {this.state.teaserTrailers.map((item, index) => {
-                        return (
-                          <TrailerItem
-                            poster={this.movieItem.backdrop_path}
-                            key={item.key}
-                            context={context}
-                            onPressFunction={() => {
-                              this.setState({
-                                modalVisible: true,
-                                activeMovieTrailerKey: item.key,
-                              });
+                        <TouchableWithoutFeedback
+                          onPress={() =>
+                            this.props.navigation.navigate("CastViewAll", {
+                              movieid: this.movieItem.id,
+                            })
+                          }
+                        >
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              flexWrap: "wrap",
+                              alignItems: "center",
                             }}
-                            data={item}
-                            modalVisible={this.state.modalVisible}
-                            itemIndex={index}
-                          />
-                        );
-                      })}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "poppins-sb",
+                                color: isDarkMode ? light.bg : dark.bg,
+                              }}
+                            >
+                              {IMLocalized("viewall")}
+                            </Text>
+                            <MaterialCommunityIcons
+                              name="chevron-right"
+                              size={20}
+                              color={isDarkMode ? light.bg : dark.bg}
+                            />
+                          </View>
+                        </TouchableWithoutFeedback>
+                      </View>
+                      <ScrollView>
+                        {this.state.castResults.map((cast, index) => {
+                          return index < 4 ? (
+                            <CastItem
+                              cast={cast}
+                              context={context}
+                              key={cast.id}
+                            />
+                          ) : (
+                            <View key={cast.id} />
+                          );
+                        })}
+                      </ScrollView>
                     </View>
-                  </View>
-                </ScrollView>
+                  </ScrollView>
+                </View>
               </View>
             </View>
           );
@@ -420,7 +518,7 @@ const styles = StyleSheet.create({
     height: 281,
   },
   posterSpace: {
-    height: 271,
+    height: 210,
   },
   title: {
     fontSize: 17,

@@ -12,6 +12,7 @@ import AppIntro from "./app/pages/AppIntro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const Stack = createStackNavigator();
 import { IMLocalized, init } from "./app/IMLocalized";
+import CastViewAll from "./app/pages/CastViewAll";
 export default function App() {
   const [fontsLoaded, setFontLoaded] = React.useState(false);
   const [initialPage, setInitialPage] = React.useState("MainRoot");
@@ -85,6 +86,12 @@ export default function App() {
             name="AppIntro"
             component={AppIntro}
             options={{ title: "AppIntro" }}
+          />
+
+          <Stack.Screen
+            name="CastViewAll"
+            component={CastViewAll}
+            options={{ title: "CastViewAll" }}
           />
         </Stack.Navigator>
       </NavigationContainer>
