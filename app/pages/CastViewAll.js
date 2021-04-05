@@ -19,7 +19,7 @@ class CastViewAll extends Component {
   apiKey = "802b2c4b88ea1183e50e6b285a27696e";
   state = {
     castList: [],
-    isLoading: false,
+    isLoading: true,
   };
   constructor(props) {
     super(props);
@@ -45,7 +45,7 @@ class CastViewAll extends Component {
             })
           );
         });
-        this.setState({ castList: casts, isLoading: true });
+        this.setState({ castList: casts, isLoading: false });
       })
       .catch((error) => console.error(error));
   };
