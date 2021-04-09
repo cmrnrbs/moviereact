@@ -33,7 +33,7 @@ export default class Home extends Component {
     query: "",
     iconName: "magnify",
     isAnimating: false,
-    fadeAnim: new Animated.Value(40),
+    fadeAnim: new Animated.Value(24),
   };
 
   constructor(props) {
@@ -183,9 +183,9 @@ export default class Home extends Component {
   handleSelect = () => {
     this.setState({ isAnimating: true });
 
-    this.state.fadeAnim._value != this.deviceWidth - 40
+    this.state.fadeAnim._value != this.deviceWidth - 24
       ? Animated.timing(this.state.fadeAnim, {
-          toValue: this.deviceWidth - 40,
+          toValue: this.deviceWidth - 24,
           duration: 500,
           useNativeDriver: false,
         }).start(() => {
@@ -193,7 +193,7 @@ export default class Home extends Component {
           this.setState({ isAnimating: false });
         })
       : Animated.timing(this.state.fadeAnim, {
-          toValue: 40,
+          toValue: 24,
           duration: 500,
           useNativeDriver: false,
         }).start(() => {
@@ -212,10 +212,9 @@ export default class Home extends Component {
       <Animated.View style={[styles.rectangle, customStyle]}>
         <TouchableWithoutFeedback
           style={{
-            width: 40,
+            width: 24,
             height: 40,
             justifyContent: "center",
-            alignItems: "center",
           }}
           onPress={() => this.handleSelect()}
         >
@@ -255,6 +254,7 @@ export default class Home extends Component {
                     <MaterialCommunityIcons
                       style={{ marginRight: 5 }}
                       name="movie"
+                      color={isDarkMode ? light.bg : dark.bg}
                       size={30}
                     />
                     <Text
@@ -287,7 +287,7 @@ export default class Home extends Component {
                   containerStyle={{
                     paddingHorizontal: 20,
                     position: "absolute",
-                    top: 40,
+                    top: 65,
                     paddingLeft: 60,
                     height: 40,
                     width: "100%",

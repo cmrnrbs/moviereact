@@ -45,7 +45,6 @@ export default class Settings extends Component {
                 { backgroundColor: isDarkMode ? dark.bg : light.bg },
               ]}
             >
-              <StatusBar style={isDarkMode ? "light" : "dark"} />
               <Text
                 style={[
                   styles.title,

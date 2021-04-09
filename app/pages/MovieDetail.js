@@ -8,6 +8,7 @@ import {
   Modal,
   StatusBar,
   Dimensions,
+  Platform,
 } from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
 import Constants from "expo-constants";
@@ -34,7 +35,10 @@ class MovieDetail extends Component {
     this.movieItem = props.route.params.item;
     this.readMovieData(this.movieItem);
     var topSpace = Constants.statusBarHeight + 10 + 48;
-    this.scrollHeight = Dimensions.get("screen").height - topSpace - 70;
+    this.scrollHeight =
+      Dimensions.get("screen").height -
+      (Platform.OS == "ios" ? 0 : topSpace) -
+      70;
   }
 
   state = {
@@ -262,7 +266,7 @@ class MovieDetail extends Component {
                     isDarkMode ? "#000" : light.bg,
                   ]}
                   start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 0.7 }}
+                  end={{ x: 0, y: Platform.OS == "ios" ? 0.6 : 0.7 }}
                   style={{ height: "100%" }}
                 ></LinearGradient>
               </View>

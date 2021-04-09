@@ -1,11 +1,16 @@
 import memoize from "lodash.memoize";
 import i18n from "i18n-js";
 import * as Localization from "expo-localization";
-import { I18nManager } from "react-native";
+import { I18nManager, Platform } from "react-native";
 
 export const translationGetters = {
   "en-US": () => require("./languages/en.json"),
   "tr-TR": () => require("./languages/tr.json"),
+};
+
+export const translationGettersIOS = {
+  en: () => require("./languages/en.json"),
+  tr: () => require("./languages/tr.json"),
 };
 
 export const IMLocalized = memoize(
@@ -20,7 +25,10 @@ export const init = () => {
   IMLocalized.cache.clear();
   I18nManager.forceRTL(isRTL);
   i18n.translations = {
-    [localeLanguageTag]: translationGetters[localeLanguageTag](),
+    [localeLanguageTag]:
+      Platform.OS == "ios"
+        ? translationGettersIOS[localeLanguageTag]()
+        : translationGetters[localeLanguageTag](),
   };
   i18n.locale = localeLanguageTag;
 };
