@@ -287,7 +287,7 @@ export default class Home extends Component {
                   containerStyle={{
                     paddingHorizontal: 20,
                     position: "absolute",
-                    top: 65,
+                    top: Platform.OS == "ios" ? 65 : 40,
                     paddingLeft: 60,
                     height: 40,
                     width: "100%",

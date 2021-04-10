@@ -1,19 +1,17 @@
 import React, { Component } from "react";
-import {
-  SafeAreaView,
-  View,
-  Switch,
-  Text,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, Switch, Text, StyleSheet, Alert } from "react-native";
 import Constants from "expo-constants";
 import { ThemeContext } from "../contexts/ThemeContext";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { IMLocalized } from "../IMLocalized";
+import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default class Settings extends Component {
+  state = {
+    selectedTriggerValue: "15",
+  };
   showLicenses = () =>
     Alert.alert(
       IMLocalized("privacypolicy"),
@@ -32,6 +30,27 @@ export default class Settings extends Component {
         cancelable: true,
       }
     );
+
+  getTriggerValue = async () => {
+    try {
+      const value = await AsyncStorage.getItem("triggerValue");
+      //console.log(value);
+      if (value == null) {
+        await AsyncStorage.setItem("triggerValue", "15");
+      } else {
+        this.setState({
+          selectedTriggerValue: value,
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  constructor() {
+    super();
+    this.getTriggerValue();
+  }
 
   render() {
     return (
@@ -77,6 +96,47 @@ export default class Settings extends Component {
                   trackColor={{ false: "#f4f3f4", true: "#f4f3f4" }}
                   thumbColor={isDarkMode ? "#26ed7c" : "#f4f3f4"}
                 />
+              </View>
+              <View style={styles.settingsItem}>
+                <View style={[styles.settingsItem2, { marginVertical: 10 }]}>
+                  <MaterialCommunityIcons
+                    name="bell-outline"
+                    size={26}
+                    color={isDarkMode ? light.bg : dark.bg}
+                  />
+                  <Text
+                    style={{
+                      marginLeft: 10,
+                      fontFamily: "poppins-l",
+                      fontSize: 15,
+                      color: isDarkMode ? light.bg : dark.bg,
+                    }}
+                  >
+                    {IMLocalized("notintervals")}
+                  </Text>
+                </View>
+                <Picker
+                  style={{ width: 140, height: 40 }}
+                  selectedValue={this.state.selectedTriggerValue}
+                  onValueChange={async (itemValue) => {
+                    this.setState({ selectedTriggerValue: itemValue });
+                    await AsyncStorage.setItem(
+                      "triggerValue",
+                      itemValue.toString()
+                    );
+                  }}
+                >
+                  <Picker.Item
+                    label={15 + " " + IMLocalized("min")}
+                    value="15"
+                  />
+                  <Picker.Item
+                    label={30 + " " + IMLocalized("min")}
+                    value="30"
+                  />
+                  <Picker.Item label={1 + " " + IMLocalized("day")} value="1" />
+                  <Picker.Item label={2 + " " + IMLocalized("day")} value="2" />
+                </Picker>
               </View>
               <TouchableWithoutFeedback
                 style={styles.listitem}

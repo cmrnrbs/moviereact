@@ -24,21 +24,41 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ThemeContext } from "../contexts/ThemeContext";
 import Cast from "./../models/Cast";
 import CastItem from "../components/CastItem";
+import * as Notifications from "expo-notifications";
+import Moment from "moment";
 const db = SQLite.openDatabase("movie.db");
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
 class MovieDetail extends Component {
   movieItem = null;
   baseUrl = "http://api.themoviedb.org/3/movie/";
   apiKey = "802b2c4b88ea1183e50e6b285a27696e";
   scrollHeight = 0;
+  triggerValue = "15";
+
+  getTriggerValue = async () => {
+    try {
+      const value = await AsyncStorage.getItem("triggerValue");
+      if (value == null) {
+        await AsyncStorage.setItem("triggerValue", "15");
+      } else {
+        this.triggerValue = value;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   constructor(props) {
     super(props);
     this.movieItem = props.route.params.item;
     this.readMovieData(this.movieItem);
-    var topSpace = Constants.statusBarHeight + 10 + 48;
+    var topSpace = Constants.statusBarHeight + 10;
     this.scrollHeight =
       Dimensions.get("screen").height -
       (Platform.OS == "ios" ? 0 : topSpace) -
       70;
+    this.getTriggerValue();
   }
 
   state = {
@@ -47,6 +67,21 @@ class MovieDetail extends Component {
     modalVisible: false,
     isFavorite: false,
     castResults: [],
+    isShow: true,
+  };
+
+  checkDate = () => {
+    var d = Moment(this.movieItem.release_date);
+    var current = Date.now();
+
+    var now = moment(current);
+
+    var duration = moment.duration(d.diff(now));
+    var days = duration.asDays();
+
+    if (days <= 0) {
+      this.setState({ isShow: false });
+    }
   };
 
   readMovieData(data) {
@@ -65,6 +100,58 @@ class MovieDetail extends Component {
       );
     });
   }
+
+  setFavoriteAlarm = async () => {
+    var addForDay =
+      this.triggerValue != "15" && this.triggerValue != "30"
+        ? Number.parseInt(this.triggerValue)
+        : 0;
+
+    var addForMin =
+      this.triggerValue != "1" && this.triggerValue != "2"
+        ? Number.parseInt(this.triggerValue)
+        : 0;
+
+    var year = this.movieItem.release_date.split("-")[0];
+    var month = this.movieItem.release_date.split("-")[1];
+    var days =
+      Number.parseInt(this.movieItem.release_date.split("-")[2]) + addForDay;
+    var hours = new Date().getHours();
+    var min = new Date().getMinutes() + addForMin;
+    var sec = new Date().getSeconds();
+    var releaseDate = year + "-" + month + "-" + days;
+    var movieDay = Date.parse(releaseDate);
+    const movieTrigger = new Date(movieDay);
+    movieTrigger.setMinutes(min);
+    movieTrigger.setHours(hours);
+    movieTrigger.setSeconds(sec);
+    movieTrigger.setMilliseconds(0);
+    //console.log(movieTrigger);
+    var dayString =
+      this.triggerValue == 15 || this.triggerValue == 30
+        ? IMLocalized("today")
+        : IMLocalized("tomorrow");
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Movie Catch",
+        body:
+          dayString +
+          ", " +
+          this.movieItem.title +
+          " " +
+          IMLocalized("notbody"),
+        data: this.movieItem,
+      },
+      trigger: movieTrigger,
+      identifier: this.movieItem.id.toString(),
+    });
+  };
+
+  cancelFavoriteAlarm = async () => {
+    await Notifications.cancelScheduledNotificationAsync(
+      this.movieItem.id.toString()
+    );
+  };
 
   downloadFile = async (data, process) => {
     const movieDir = FileSystem.documentDirectory + "/" + data.id + "/";
@@ -92,6 +179,7 @@ class MovieDetail extends Component {
           if (resultSet.rowsAffected > 0) {
             //Delete operation
             this.setState({ isFavorite: false });
+            this.cancelFavoriteAlarm();
           }
         }
       );
@@ -105,8 +193,10 @@ class MovieDetail extends Component {
         this.downloadFile(data, 2).then((response) => {
           //TODO: backdrop_path download
           if (response.status == 200) {
-            data.genresString = "";
-            data.genresString += data.genres.map((item, index) => item);
+            if (data.genresString == undefined) {
+              data.genresString = "";
+              data.genresString += data.genres.map((item, index) => item);
+            }
             db.transaction((tx) => {
               tx.executeSql(
                 "INSERT INTO Favorites (movie_id, title, genres, overview, popularity, release_date, vote_average, vote_count) values (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -122,6 +212,7 @@ class MovieDetail extends Component {
                 ],
                 (txObj, resultSet) => {
                   this.setState({ isFavorite: true });
+                  this.setFavoriteAlarm();
                 },
                 (txObj, error) => console.log("Error", error)
               );
@@ -143,6 +234,7 @@ class MovieDetail extends Component {
   }
 
   componentDidMount() {
+    this.checkDate();
     return fetch(
       this.baseUrl + this.movieItem.id + "/videos?api_key=" + this.apiKey
     )
@@ -298,23 +390,27 @@ class MovieDetail extends Component {
                     color={isDarkMode ? light.bg : dark.bg}
                   />
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback
-                  onPress={() => this.favoriteProcess(this.movieItem)}
-                >
-                  <MaterialCommunityIcons
-                    style={{
-                      position: "absolute",
-                      top: Constants.statusBarHeight + 10,
-                      right: 10,
-                      zIndex: 1,
-                      paddingLeft: 20,
-                      paddingBottom: 20,
-                    }}
-                    name={this.state.isFavorite ? "heart" : "heart-outline"}
-                    size={24}
-                    color={isDarkMode ? light.bg : dark.bg}
-                  />
-                </TouchableWithoutFeedback>
+                {this.state.isShow ? (
+                  <TouchableWithoutFeedback
+                    onPress={() => this.favoriteProcess(this.movieItem)}
+                  >
+                    <MaterialCommunityIcons
+                      style={{
+                        position: "absolute",
+                        top: Constants.statusBarHeight + 10,
+                        right: 10,
+                        zIndex: 1,
+                        paddingLeft: 20,
+                        paddingBottom: 20,
+                      }}
+                      name={this.state.isFavorite ? "heart" : "heart-outline"}
+                      size={24}
+                      color={isDarkMode ? light.bg : dark.bg}
+                    />
+                  </TouchableWithoutFeedback>
+                ) : (
+                  <View />
+                )}
                 <View
                   style={{
                     marginTop: 70,
