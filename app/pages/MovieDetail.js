@@ -28,6 +28,7 @@ import * as Notifications from "expo-notifications";
 import Moment from "moment";
 const db = SQLite.openDatabase("movie.db");
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SnackBar from "react-native-snackbar-component";
 import moment from "moment";
 class MovieDetail extends Component {
   movieItem = null;
@@ -68,6 +69,8 @@ class MovieDetail extends Component {
     isFavorite: false,
     castResults: [],
     isShow: true,
+    isVisibleMessage: false,
+    messageText: "",
   };
 
   checkDate = () => {
@@ -179,6 +182,7 @@ class MovieDetail extends Component {
           if (resultSet.rowsAffected > 0) {
             //Delete operation
             this.setState({ isFavorite: false });
+            this.setMessage(2);
             this.cancelFavoriteAlarm();
           }
         }
@@ -212,6 +216,7 @@ class MovieDetail extends Component {
                 ],
                 (txObj, resultSet) => {
                   this.setState({ isFavorite: true });
+                  this.setMessage(1);
                   this.setFavoriteAlarm();
                 },
                 (txObj, error) => console.log("Error", error)
@@ -221,6 +226,19 @@ class MovieDetail extends Component {
         });
       }
     });
+  };
+
+  setMessage = async (process) => {
+    //TODO: process  1 = ekleme , 2 = çıkarma
+    if (process == 1) {
+      this.setState({ messageText: IMLocalized("movieadd") });
+    } else {
+      this.setState({ messageText: IMLocalized("movieremove") });
+    }
+
+    this.setState({ isVisibleMessage: true });
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    this.setState({ isVisibleMessage: false });
   };
 
   favoriteProcess(data) {
@@ -284,6 +302,12 @@ class MovieDetail extends Component {
           return (
             <View style={styles.container}>
               <StatusBar style={isDarkMode ? "light" : "dark"} />
+              <SnackBar
+                visible={this.state.isVisibleMessage}
+                textMessage={this.state.messageText}
+                backgroundColor={isDarkMode ? light.bg : dark.bg}
+                messageColor={isDarkMode ? dark.bg : light.bg}
+              />
               <Modal
                 style={{ position: "absolute", top: 0 }}
                 animationType="slide"

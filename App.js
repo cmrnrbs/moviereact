@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -35,7 +35,6 @@ export default function App() {
   const responseListener = useRef();
   const [fontsLoaded, setFontLoaded] = React.useState(false);
   const [initialPage, setInitialPage] = React.useState("MainRoot");
-
   const getPage = async () => {
     try {
       const value = await AsyncStorage.getItem("isFirstRun");
@@ -79,7 +78,6 @@ export default function App() {
         console.warn(e);
       } finally {
         setFontLoaded(true);
-        //setAppIsReady(true);
       }
     }
     //AsyncStorage.clear();
@@ -145,12 +143,7 @@ export default function App() {
   init();
   if (!isReady) {
     return (
-      <ThemeContext.Provider>
-        <CustomSplashScreen
-          onLoadLayout={onLoadLayout}
-          isDarkMode={isDarkMode}
-        />
-      </ThemeContext.Provider>
+      <CustomSplashScreen onLoadLayout={onLoadLayout} isDarkMode={isDarkMode} />
     );
   }
 

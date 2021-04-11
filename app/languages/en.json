@@ -17,6 +17,8 @@
   "overview": "Overview",
   "teaserstrailers": "Teasers & Trailers",
   "casts": "Casts",
+  "movieadd": "The movie has been added to favorites.",
+  "movieremove": "The movie has been removed from the favorites.",
   "nodatafound": "No Data Found",
   "darkmode": "Dark Mode",
   "notintervals": "Notification Intervals",
