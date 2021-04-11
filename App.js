@@ -1,12 +1,14 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainRoot from "./app/pages/MainRoot";
 import MovieDetail from "./app/pages/MovieDetail";
 import * as Font from "expo-font";
-import ThemeContextProvider from "./app/contexts/ThemeContext";
+import ThemeContextProvider, {
+  ThemeContext,
+} from "./app/contexts/ThemeContext";
 import ViewAll from "./app/pages/ViewAll";
 import AppIntro from "./app/pages/AppIntro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,7 +16,8 @@ const Stack = createStackNavigator();
 import { init } from "./app/IMLocalized";
 import CastViewAll from "./app/pages/CastViewAll";
 import * as Notifications from "expo-notifications";
-
+import * as SplashScreen from "expo-splash-screen";
+import CustomSplashScreen from "./app/components/CustomSplashScreen";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -24,6 +27,8 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
+  const [isReady, setReady] = useState(false);
+  const [isDarkMode, setDarkMode] = useState(false);
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -41,6 +46,68 @@ export default function App() {
       console.error(e);
     }
   };
+
+  const onLoadLayout = async () => {
+    SplashScreen.hideAsync();
+    try {
+      const value = await AsyncStorage.getItem("isDarkMode");
+      if (value != null) {
+        if (value == "true") {
+          setDarkMode(true);
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setReady(true);
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+    async function loadResourcesAndDataAsync() {
+      try {
+        //TODO: Load fonts
+        await Font.loadAsync({
+          "poppins-r": require("./app/assets/fonts/Poppins-Regular.ttf"),
+          "poppins-l": require("./app/assets/fonts/Poppins-Light.ttf"),
+          "poppins-sb": require("./app/assets/fonts/Poppins-SemiBold.ttf"),
+          "poppins-b": require("./app/assets/fonts/Poppins-Bold.ttf"),
+        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setFontLoaded(true);
+        //setAppIsReady(true);
+      }
+    }
+    //AsyncStorage.clear();
+    //setInitialPage("AppIntro");
+    //loadResourcesAndDataAsync();
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        setNotification(notification);
+      }
+    );
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log(response.notification.request.content.data);
+        const movieData = response.notification.request.content.data;
+      }
+    );
+
+    getPage().then(() => loadResourcesAndDataAsync());
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, []);
 
   async function registerForPushNotificationsAsync() {
     let token;
@@ -71,53 +138,22 @@ export default function App() {
     return token;
   }
 
-  React.useEffect(() => {
-    async function loadResourcesAndDataAsync() {
-      try {
-        //TODO: Load fonts
-        await Font.loadAsync({
-          "poppins-r": require("./app/assets/fonts/Poppins-Regular.ttf"),
-          "poppins-l": require("./app/assets/fonts/Poppins-Light.ttf"),
-          "poppins-sb": require("./app/assets/fonts/Poppins-SemiBold.ttf"),
-          "poppins-b": require("./app/assets/fonts/Poppins-Bold.ttf"),
-        });
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setFontLoaded(true);
-      }
-    }
-    //AsyncStorage.clear();
-    //setInitialPage("AppIntro");
-    //loadResourcesAndDataAsync();
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        setNotification(notification);
-      }
-    );
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        console.log(response.notification.request.content.data);
-        const movieData = response.notification.request.content.data;
-      }
-    );
-
-    getPage().then(() => loadResourcesAndDataAsync());
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener);
-      Notifications.removeNotificationSubscription(responseListener);
-    };
-  }, []);
-
   if (!fontsLoaded) {
     return null;
   }
+
   init();
+  if (!isReady) {
+    return (
+      <ThemeContext.Provider>
+        <CustomSplashScreen
+          onLoadLayout={onLoadLayout}
+          isDarkMode={isDarkMode}
+        />
+      </ThemeContext.Provider>
+    );
+  }
+
   return (
     <ThemeContextProvider>
       <StatusBar style="auto" />
